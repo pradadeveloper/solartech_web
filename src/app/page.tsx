@@ -1,103 +1,164 @@
-import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import { Hero } from "@/components/sections/hero";
+import { TrustBar } from "@/components/sections/trust-bar";
+import { Section } from "@/components/sections/section";
+import { BusinessModels } from "@/components/sections/business-models";
+import { ProjectCard } from "@/components/sections/project-card";
+import { PortfolioPanel } from "@/components/sections/portfolio-panel";
+import { TaxBenefits } from "@/components/sections/tax-benefits";
+import { ProcessSteps } from "@/components/sections/process-steps";
+import { Pillars } from "@/components/sections/pillars";
+import { HowItWorks } from "@/components/sections/how-it-works";
+import { ClientLogos } from "@/components/sections/client-logos";
+import { FaqList } from "@/components/sections/faq-list";
+import { CtaBand } from "@/components/sections/cta-band";
+import { ButtonLink } from "@/components/ui/button";
+import { projects } from "@/content/projects";
+import { faqs } from "@/content/faq";
+import { pageMetadata } from "@/lib/seo";
+import { getAllPosts } from "@/lib/blog";
+import { PostCard } from "@/components/blog/post-card";
+import { toCardData } from "@/components/blog/blog-listing";
 
-export default function Home() {
+export const metadata = {
+  ...pageMetadata({
+    title: "Paneles solares para empresas en Colombia",
+    description: "Proyectos solares con retorno de 3 a 4 años: EPC llave en mano, PPA sin inversión y O&M. Parte del grupo Ferragro. Calcula tu ahorro gratis.",
+    path: "/",
+  }),
+  // El home usa el título completo, sin el sufijo del template.
+  title: { absolute: "Paneles solares para empresas en Colombia | Solartech" },
+};
+
+export default function HomePage() {
+  const latestPosts = getAllPosts().slice(0, 3);
+  // Destacados: proyectos con ahorro y retorno documentados, de mayor a menor ahorro.
+  const featured = projects
+    .filter((p) => p.paybackYears !== null && p.monthlySavingsCop !== null)
+    .sort((a, b) => (b.monthlySavingsCop ?? 0) - (a.monthlySavingsCop ?? 0))
+    .slice(0, 6);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <Hero />
+      <TrustBar />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <Section
+        id="modelos"
+        eyebrow="Modelos de negocio"
+        title="Elige cómo quieres invertir en energía solar"
+        description="Compra tu planta y quédate con todo el ahorro, o paga solo la energía sin invertir. Y si ya tienes una planta, la mantenemos produciendo al máximo."
+        action={
+          <ButtonLink href="/servicios/" variant="secondary">
+            Comparar modelos
+          </ButtonLink>
+        }
+      >
+        <BusinessModels />
+      </Section>
+
+      <Section
+        id="como-funciona-sistema"
+        tone="muted"
+        eyebrow="Cómo funciona"
+        title="¿Cómo funciona un sistema solar?"
+        description="Del panel a tu factura: la energía que generas se consume primero en tu instalación y lo que sobra se entrega a la red."
+      >
+        <HowItWorks />
+      </Section>
+
+      <Section
+        id="proyectos"
+        eyebrow="Casos de éxito"
+        title="Empresas que ya convirtieron su factura en ahorro"
+        description="Cifras reales de proyectos que diseñamos y construimos en Antioquia, la costa Caribe y el Eje Cafetero."
+        action={
+          <ButtonLink href="/proyectos/" variant="secondary">
+            Ver todos los proyectos
+            <ArrowUpRight aria-hidden className="size-4" />
+          </ButtonLink>
+        }
+      >
+        <div className="mb-10 max-w-2xl">
+          <PortfolioPanel />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((p) => (
+            <li key={p.slug}>
+              <ProjectCard project={p} />
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section
+        id="clientes"
+        tone="muted"
+        eyebrow="Clientes"
+        title="Empresas que ya generan su energía con Solartech"
+        description="Industria, comercio, colegios, hoteles, agro y copropiedades en todo el país."
+      >
+        <ClientLogos />
+      </Section>
+
+      <Section
+        id="beneficios-tributarios"
+        eyebrow="Ley 1715 · Ley 2099"
+        title="El Estado te ayuda a pagar tu planta solar"
+        description="Los proyectos de energía solar tienen incentivos tributarios que mejoran aún más su rentabilidad."
+        action={
+          <ButtonLink href="/beneficios-tributarios/" variant="secondary">
+            Conocer los beneficios
+          </ButtonLink>
+        }
+      >
+        <TaxBenefits />
+      </Section>
+
+      <Section id="como-funciona" tone="muted" eyebrow="Cómo trabajamos" title="De tu factura a tu planta solar en 5 pasos">
+        <ProcessSteps />
+      </Section>
+
+      <Section id="por-que-solar" eyebrow="Por qué energía solar" title="Cinco razones para generar tu propia energía">
+        <Pillars />
+      </Section>
+
+      <Section
+        id="preguntas"
+        tone="muted"
+        eyebrow="Preguntas frecuentes"
+        title="Lo que más nos preguntan"
+        action={
+          <ButtonLink href="/preguntas-frecuentes/" variant="secondary">
+            Ver todas
+          </ButtonLink>
+        }
+      >
+        <FaqList items={faqs.slice(0, 5)} />
+      </Section>
+
+      {latestPosts.length > 0 && (
+        <Section
+          id="blog"
+          eyebrow="Blog"
+          title="Aprende antes de invertir"
+          action={
+            <ButtonLink href="/blog/" variant="secondary">
+              Ver el blog
+            </ButtonLink>
+          }
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {latestPosts.map((p) => (
+              <li key={p.slug}>
+                <PostCard post={toCardData(p)} />
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
+      <CtaBand />
+    </>
   );
 }

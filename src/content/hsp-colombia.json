@@ -1,0 +1,920 @@
+[
+ {
+  "departamento": "Antioquia",
+  "hsp": 3.5,
+  "municipios": [
+   {
+    "nombre": "Medellín",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Bello",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Itagüí",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Envigado",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Sabaneta",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "La Estrella",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Caldas",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Copacabana",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Girardota",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Barbosa",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Rionegro",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Apartadó",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Turbo",
+    "hsp": 4.3
+   },
+   {
+    "nombre": "Caucasia",
+    "hsp": 4.4
+   },
+   {
+    "nombre": "Andes",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Jericó",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Fredonia",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Amagá",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Támesis",
+    "hsp": 3.6
+   }
+  ]
+ },
+ {
+  "departamento": "Atlántico",
+  "hsp": 4.8,
+  "municipios": [
+   {
+    "nombre": "Barranquilla",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Soledad",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Malambo",
+    "hsp": 4.7
+   },
+   {
+    "nombre": "Sabanalarga",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Baranoa",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Puerto Colombia",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Galapa",
+    "hsp": 4.7
+   }
+  ]
+ },
+ {
+  "departamento": "Bogotá D.C.",
+  "hsp": 3,
+  "municipios": [
+   {
+    "nombre": "Bogotá",
+    "hsp": 3
+   }
+  ]
+ },
+ {
+  "departamento": "Bolívar",
+  "hsp": 4.8,
+  "municipios": [
+   {
+    "nombre": "Cartagena",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Magangué",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "El Carmen de Bolívar",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Mompox",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Turbaco",
+    "hsp": 4.7
+   }
+  ]
+ },
+ {
+  "departamento": "Boyacá",
+  "hsp": 3.5,
+  "municipios": [
+   {
+    "nombre": "Tunja",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Duitama",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Sogamoso",
+    "hsp": 3.7
+   },
+   {
+    "nombre": "Chiquinquirá",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Paipa",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Puerto Boyacá",
+    "hsp": 4.2
+   }
+  ]
+ },
+ {
+  "departamento": "Caldas",
+  "hsp": 3.6,
+  "municipios": [
+   {
+    "nombre": "Manizales",
+    "hsp": 3.4
+   },
+   {
+    "nombre": "Villamaría",
+    "hsp": 3.4
+   },
+   {
+    "nombre": "Chinchiná",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "La Dorada",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Riosucio",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Anserma",
+    "hsp": 3.6
+   }
+  ]
+ },
+ {
+  "departamento": "Caquetá",
+  "hsp": 3.8,
+  "municipios": [
+   {
+    "nombre": "Florencia",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "San Vicente del Caguán",
+    "hsp": 4
+   },
+   {
+    "nombre": "Puerto Rico",
+    "hsp": 3.9
+   }
+  ]
+ },
+ {
+  "departamento": "Casanare",
+  "hsp": 4.5,
+  "municipios": [
+   {
+    "nombre": "Yopal",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Aguazul",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Villanueva",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Paz de Ariporo",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Trinidad",
+    "hsp": 4.5
+   }
+  ]
+ },
+ {
+  "departamento": "Cauca",
+  "hsp": 3.6,
+  "municipios": [
+   {
+    "nombre": "Popayán",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Santander de Quilichao",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Puerto Tejada",
+    "hsp": 3.9
+   },
+   {
+    "nombre": "Piendamó",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Patía",
+    "hsp": 3.8
+   }
+  ]
+ },
+ {
+  "departamento": "Cesar",
+  "hsp": 4.5,
+  "municipios": [
+   {
+    "nombre": "Valledupar",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Aguachica",
+    "hsp": 4.3
+   },
+   {
+    "nombre": "Bosconia",
+    "hsp": 4.4
+   },
+   {
+    "nombre": "La Jagua de Ibirico",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Codazzi",
+    "hsp": 4.5
+   }
+  ]
+ },
+ {
+  "departamento": "Chocó",
+  "hsp": 3.2,
+  "municipios": [
+   {
+    "nombre": "Quibdó",
+    "hsp": 3
+   },
+   {
+    "nombre": "Istmina",
+    "hsp": 3.2
+   },
+   {
+    "nombre": "Tadó",
+    "hsp": 3.2
+   },
+   {
+    "nombre": "Bahía Solano",
+    "hsp": 3.5
+   },
+   {
+    "nombre": "Nuquí",
+    "hsp": 3.4
+   }
+  ]
+ },
+ {
+  "departamento": "Córdoba",
+  "hsp": 4.6,
+  "municipios": [
+   {
+    "nombre": "Montería",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Cereté",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Lorica",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Sahagún",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Tierralta",
+    "hsp": 4.4
+   },
+   {
+    "nombre": "Montelíbano",
+    "hsp": 4.5
+   }
+  ]
+ },
+ {
+  "departamento": "Cundinamarca",
+  "hsp": 3.5,
+  "municipios": [
+   {
+    "nombre": "Soacha",
+    "hsp": 3.2
+   },
+   {
+    "nombre": "Fusagasugá",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Zipaquirá",
+    "hsp": 3.3
+   },
+   {
+    "nombre": "Facatativá",
+    "hsp": 3.4
+   },
+   {
+    "nombre": "Chía",
+    "hsp": 3.2
+   },
+   {
+    "nombre": "Mosquera",
+    "hsp": 3.2
+   },
+   {
+    "nombre": "Madrid",
+    "hsp": 3.3
+   },
+   {
+    "nombre": "Funza",
+    "hsp": 3.2
+   },
+   {
+    "nombre": "Girardot",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "La Mesa",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Villeta",
+    "hsp": 4.3
+   }
+  ]
+ },
+ {
+  "departamento": "La Guajira",
+  "hsp": 5.5,
+  "municipios": [
+   {
+    "nombre": "Riohacha",
+    "hsp": 5.5
+   },
+   {
+    "nombre": "Maicao",
+    "hsp": 5.6
+   },
+   {
+    "nombre": "Uribia",
+    "hsp": 6
+   },
+   {
+    "nombre": "Manaure",
+    "hsp": 5.8
+   },
+   {
+    "nombre": "San Juan del Cesar",
+    "hsp": 5
+   },
+   {
+    "nombre": "Dibulla",
+    "hsp": 5.2
+   }
+  ]
+ },
+ {
+  "departamento": "Huila",
+  "hsp": 4.5,
+  "municipios": [
+   {
+    "nombre": "Neiva",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Pitalito",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Garzón",
+    "hsp": 4.4
+   },
+   {
+    "nombre": "La Plata",
+    "hsp": 4
+   },
+   {
+    "nombre": "Campoalegre",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Rivera",
+    "hsp": 4.5
+   }
+  ]
+ },
+ {
+  "departamento": "Magdalena",
+  "hsp": 4.8,
+  "municipios": [
+   {
+    "nombre": "Santa Marta",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Ciénaga",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Fundación",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "El Banco",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Plato",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Aracataca",
+    "hsp": 4.7
+   }
+  ]
+ },
+ {
+  "departamento": "Meta",
+  "hsp": 4.2,
+  "municipios": [
+   {
+    "nombre": "Villavicencio",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Acacías",
+    "hsp": 4.3
+   },
+   {
+    "nombre": "Granada",
+    "hsp": 4.4
+   },
+   {
+    "nombre": "San Martín",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "Puerto López",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Puerto Gaitán",
+    "hsp": 4.8
+   }
+  ]
+ },
+ {
+  "departamento": "Nariño",
+  "hsp": 3.4,
+  "municipios": [
+   {
+    "nombre": "Pasto",
+    "hsp": 3.2
+   },
+   {
+    "nombre": "Tumaco",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Ipiales",
+    "hsp": 3.4
+   },
+   {
+    "nombre": "Túquerres",
+    "hsp": 3.3
+   },
+   {
+    "nombre": "La Unión",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Samaniego",
+    "hsp": 3.6
+   }
+  ]
+ },
+ {
+  "departamento": "Norte de Santander",
+  "hsp": 4.2,
+  "municipios": [
+   {
+    "nombre": "Cúcuta",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Ocaña",
+    "hsp": 4
+   },
+   {
+    "nombre": "Pamplona",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Villa del Rosario",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Los Patios",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Tibú",
+    "hsp": 4.5
+   }
+  ]
+ },
+ {
+  "departamento": "Putumayo",
+  "hsp": 3.8,
+  "municipios": [
+   {
+    "nombre": "Mocoa",
+    "hsp": 3.6
+   },
+   {
+    "nombre": "Puerto Asís",
+    "hsp": 4
+   },
+   {
+    "nombre": "Orito",
+    "hsp": 3.9
+   },
+   {
+    "nombre": "Valle del Guamuez",
+    "hsp": 4
+   }
+  ]
+ },
+ {
+  "departamento": "Quindío",
+  "hsp": 3.8,
+  "municipios": [
+   {
+    "nombre": "Armenia",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Calarcá",
+    "hsp": 3.7
+   },
+   {
+    "nombre": "Montenegro",
+    "hsp": 3.9
+   },
+   {
+    "nombre": "Quimbaya",
+    "hsp": 3.9
+   },
+   {
+    "nombre": "La Tebaida",
+    "hsp": 4
+   },
+   {
+    "nombre": "Circasia",
+    "hsp": 3.7
+   }
+  ]
+ },
+ {
+  "departamento": "Risaralda",
+  "hsp": 3.8,
+  "municipios": [
+   {
+    "nombre": "Pereira",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Dosquebradas",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Santa Rosa de Cabal",
+    "hsp": 3.7
+   },
+   {
+    "nombre": "La Virginia",
+    "hsp": 4
+   },
+   {
+    "nombre": "Quinchía",
+    "hsp": 3.7
+   },
+   {
+    "nombre": "Marsella",
+    "hsp": 3.8
+   }
+  ]
+ },
+ {
+  "departamento": "Santander",
+  "hsp": 4,
+  "municipios": [
+   {
+    "nombre": "Bucaramanga",
+    "hsp": 4
+   },
+   {
+    "nombre": "Floridablanca",
+    "hsp": 4
+   },
+   {
+    "nombre": "Girón",
+    "hsp": 4.1
+   },
+   {
+    "nombre": "Piedecuesta",
+    "hsp": 4.1
+   },
+   {
+    "nombre": "Barrancabermeja",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "San Gil",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Socorro",
+    "hsp": 4
+   },
+   {
+    "nombre": "Málaga",
+    "hsp": 3.8
+   }
+  ]
+ },
+ {
+  "departamento": "Sucre",
+  "hsp": 4.8,
+  "municipios": [
+   {
+    "nombre": "Sincelejo",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Corozal",
+    "hsp": 4.7
+   },
+   {
+    "nombre": "Sampués",
+    "hsp": 4.7
+   },
+   {
+    "nombre": "San Marcos",
+    "hsp": 4.6
+   },
+   {
+    "nombre": "Tolú",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Coveñas",
+    "hsp": 4.9
+   }
+  ]
+ },
+ {
+  "departamento": "Tolima",
+  "hsp": 4.2,
+  "municipios": [
+   {
+    "nombre": "Ibagué",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Espinal",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Melgar",
+    "hsp": 5
+   },
+   {
+    "nombre": "Honda",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Chaparral",
+    "hsp": 4
+   },
+   {
+    "nombre": "Líbano",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Mariquita",
+    "hsp": 4.5
+   }
+  ]
+ },
+ {
+  "departamento": "Valle del Cauca",
+  "hsp": 4,
+  "municipios": [
+   {
+    "nombre": "Cali",
+    "hsp": 4
+   },
+   {
+    "nombre": "Buenaventura",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Palmira",
+    "hsp": 4.2
+   },
+   {
+    "nombre": "Tuluá",
+    "hsp": 4
+   },
+   {
+    "nombre": "Buga",
+    "hsp": 4.1
+   },
+   {
+    "nombre": "Cartago",
+    "hsp": 4
+   },
+   {
+    "nombre": "Yumbo",
+    "hsp": 4
+   },
+   {
+    "nombre": "Jamundí",
+    "hsp": 4.1
+   },
+   {
+    "nombre": "Zarzal",
+    "hsp": 4.2
+   }
+  ]
+ },
+ {
+  "departamento": "Arauca",
+  "hsp": 4.8,
+  "municipios": [
+   {
+    "nombre": "Arauca",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Saravena",
+    "hsp": 4.7
+   },
+   {
+    "nombre": "Tame",
+    "hsp": 4.8
+   },
+   {
+    "nombre": "Arauquita",
+    "hsp": 4.7
+   }
+  ]
+ },
+ {
+  "departamento": "Amazonas",
+  "hsp": 3.8,
+  "municipios": [
+   {
+    "nombre": "Leticia",
+    "hsp": 3.8
+   },
+   {
+    "nombre": "Puerto Nariño",
+    "hsp": 3.8
+   }
+  ]
+ },
+ {
+  "departamento": "Guainía",
+  "hsp": 4,
+  "municipios": [
+   {
+    "nombre": "Inírida",
+    "hsp": 4
+   }
+  ]
+ },
+ {
+  "departamento": "Guaviare",
+  "hsp": 4,
+  "municipios": [
+   {
+    "nombre": "San José del Guaviare",
+    "hsp": 4
+   },
+   {
+    "nombre": "El Retorno",
+    "hsp": 4
+   }
+  ]
+ },
+ {
+  "departamento": "Vaupés",
+  "hsp": 3.8,
+  "municipios": [
+   {
+    "nombre": "Mitú",
+    "hsp": 3.8
+   }
+  ]
+ },
+ {
+  "departamento": "Vichada",
+  "hsp": 4.5,
+  "municipios": [
+   {
+    "nombre": "Puerto Carreño",
+    "hsp": 4.5
+   },
+   {
+    "nombre": "La Primavera",
+    "hsp": 4.5
+   }
+  ]
+ },
+ {
+  "departamento": "San Andrés y Providencia",
+  "hsp": 5,
+  "municipios": [
+   {
+    "nombre": "San Andrés",
+    "hsp": 5
+   },
+   {
+    "nombre": "Providencia",
+    "hsp": 5
+   }
+  ]
+ }
+]

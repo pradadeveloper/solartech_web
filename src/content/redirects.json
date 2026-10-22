@@ -1,0 +1,474 @@
+[
+  {
+    "source": "/1",
+    "destination": "/servicios/gestion-de-plantas/"
+  },
+  {
+    "source": "/3427110",
+    "destination": "/"
+  },
+  {
+    "source": "/535188",
+    "destination": "/"
+  },
+  {
+    "source": "/68-685342_icono-dinero-prstamo-dollar-bill-icon-png-clipart",
+    "destination": "/"
+  },
+  {
+    "source": "/author/camilow-lab-co",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/author/camilow-lab-co/feed",
+    "destination": "/blog/"
+  },
+  {
+    "source": "/author/juan-felipe",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/author/juan-felipe/feed",
+    "destination": "/blog/"
+  },
+  {
+    "source": "/back-money-in-wallet-line-icon-illustration-vector",
+    "destination": "/"
+  },
+  {
+    "source": "/banner-solartech",
+    "destination": "/"
+  },
+  {
+    "source": "/blog/uncategorized",
+    "destination": "/blog/"
+  },
+  {
+    "source": "/blog/uncategorized/feed",
+    "destination": "/blog/"
+  },
+  {
+    "source": "/call-to-action-bg",
+    "destination": "/"
+  },
+  {
+    "source": "/call-to-action-rojo",
+    "destination": "/"
+  },
+  {
+    "source": "/call-to-action",
+    "destination": "/"
+  },
+  {
+    "source": "/caribe-motors-20240829t002119z-001",
+    "destination": "/proyectos/caribe-motor/"
+  },
+  {
+    "source": "/cashback-icon-return-money-two-hand-holding-with-money-dollar-return-save-money-salary-financial-investment-icon-invest-finance-solid-style-illustration-design-on-white-background-eps10-vector",
+    "destination": "/"
+  },
+  {
+    "source": "/category-sitemap.xml",
+    "destination": "/sitemap.xml"
+  },
+  {
+    "source": "/chris-henry-o3_nfpk4vsa-unsplash-1",
+    "destination": "/"
+  },
+  {
+    "source": "/comments/feed",
+    "destination": "/blog/"
+  },
+  {
+    "source": "/contactenos",
+    "destination": "/contacto/"
+  },
+  {
+    "source": "/contacto-solartech",
+    "destination": "/contacto/"
+  },
+  {
+    "source": "/cropped-favicon-png",
+    "destination": "/"
+  },
+  {
+    "source": "/default-2",
+    "destination": "/"
+  },
+  {
+    "source": "/default-3",
+    "destination": "/"
+  },
+  {
+    "source": "/default",
+    "destination": "/"
+  },
+  {
+    "source": "/favicon",
+    "destination": "/"
+  },
+  {
+    "source": "/feed",
+    "destination": "/blog/"
+  },
+  {
+    "source": "/infografico-solar",
+    "destination": "/servicios/"
+  },
+  {
+    "source": "/local-sitemap.xml",
+    "destination": "/sitemap.xml"
+  },
+  {
+    "source": "/location-icon-line-style-free-vector",
+    "destination": "/"
+  },
+  {
+    "source": "/locations.kml",
+    "destination": "/sitemap.xml"
+  },
+  {
+    "source": "/mail-open-fill",
+    "destination": "/"
+  },
+  {
+    "source": "/map-pin-2-fill-2",
+    "destination": "/"
+  },
+  {
+    "source": "/money-percentage-return-line-icon-illustration-vector",
+    "destination": "/"
+  },
+  {
+    "source": "/natural-havest",
+    "destination": "/proyectos/natural-harvest/"
+  },
+  {
+    "source": "/page-sitemap.xml",
+    "destination": "/sitemap.xml"
+  },
+  {
+    "source": "/paneles-solares-iconos-1",
+    "destination": "/"
+  },
+  {
+    "source": "/paneles-solares-iconos-2",
+    "destination": "/"
+  },
+  {
+    "source": "/paneles-solares-iconos-3",
+    "destination": "/"
+  },
+  {
+    "source": "/paneles-solares-iconos-4",
+    "destination": "/"
+  },
+  {
+    "source": "/phone-fill",
+    "destination": "/"
+  },
+  {
+    "source": "/png-clipart-computer-icons-symbol-internationalization-and-localization-symbol-miscellaneous-logo-thumbnail",
+    "destination": "/"
+  },
+  {
+    "source": "/post-sitemap.xml",
+    "destination": "/sitemap.xml"
+  },
+  {
+    "source": "/ppc-2",
+    "destination": "/servicios/"
+  },
+  {
+    "source": "/ppc",
+    "destination": "/servicios/"
+  },
+  {
+    "source": "/proyect-1",
+    "destination": "/proyectos/"
+  },
+  {
+    "source": "/proyect-2",
+    "destination": "/proyectos/"
+  },
+  {
+    "source": "/proyect-3",
+    "destination": "/proyectos/"
+  },
+  {
+    "source": "/proyect-4",
+    "destination": "/proyectos/"
+  },
+  {
+    "source": "/proyect-5",
+    "destination": "/proyectos/"
+  },
+  {
+    "source": "/proyect-6",
+    "destination": "/proyectos/"
+  },
+  {
+    "source": "/proyectos-iconos-1",
+    "destination": "/"
+  },
+  {
+    "source": "/proyectos-iconos-2",
+    "destination": "/"
+  },
+  {
+    "source": "/quienes-somos-2",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/banco_de_bogota_logo-svg",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/bancolombia_s-a-_logo-svg",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/growatt-logo",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/logo-davivienda",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/logo-longi",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/logo-risen",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/logo_acesco-alurak",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/longi-logo-new",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/quienes-somos/attachment/young-person-intership",
+    "destination": "/quienes-somos/"
+  },
+  {
+    "source": "/return",
+    "destination": "/"
+  },
+  {
+    "source": "/servicios/attachment/default-9",
+    "destination": "/servicios/"
+  },
+  {
+    "source": "/servicios/attachment/whatsapp-image-2024-02-16-at-6-09-46-pm-2",
+    "destination": "/servicios/"
+  },
+  {
+    "source": "/servicios/attachment/whatsapp-image-2024-02-16-at-6-09-46-pm",
+    "destination": "/servicios/"
+  },
+  {
+    "source": "/solartech-2",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech-logo-blanco",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech-logo",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/13505",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/default-4",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/default-5",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/default-6",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/default-7",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/default-8",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/high-angle-shot-of-private-houses-with-solar-panels-on-the-roofs",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/loop-mejorado-1-1",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/loop-mejorado-_1_-_1_-2",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/loop-mejorado-_1_-_1_",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/loop-mejorado-para-movil-1-1",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/loop-mejorado-para-movil-_1_-_1_-2",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/loop-mejorado-para-movil-_1_-_1_-3",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/loop-mejorado-para-movil-_1_-_1_",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/onedrive_1_1-4-2025",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/video_loop_optimized-2",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/video_loop_optimized-3",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/video_loop_optimized-4",
+    "destination": "/"
+  },
+  {
+    "source": "/solartech/attachment/video_loop_optimized",
+    "destination": "/"
+  },
+  {
+    "source": "/templamos",
+    "destination": "/proyectos/templamos/"
+  },
+  {
+    "source": "/time-fill",
+    "destination": "/"
+  },
+  {
+    "source": "/uncategorized/baterias-vs-conexion-a-la-red-cual-es-la-mejor-opcion-para-mi-proyecto-solar",
+    "destination": "/blog/baterias-vs-conexion-a-red/"
+  },
+  {
+    "source": "/uncategorized/baterias-vs-conexion-a-la-red-cual-es-la-mejor-opcion-para-mi-proyecto-solar/attachment/baterias-vs-conexion-a-la-red-cual-es-la-mejor-opcion-para-mi-proyecto-solar-2",
+    "destination": "/blog/baterias-vs-conexion-a-red/"
+  },
+  {
+    "source": "/uncategorized/estas-pensando-en-invertir-en-un-proyecto-de-energia-solar-y-no-estas-seguro-si-los-techos-que-tienes-funcionan",
+    "destination": "/blog/techo-apto-para-paneles-solares/"
+  },
+  {
+    "source": "/uncategorized/estas-pensando-en-invertir-en-un-proyecto-de-energia-solar-y-no-estas-seguro-si-los-techos-que-tienes-funcionan/attachment/estas-pensando-en-invertir-en-un-proyecto-de-energia-solar-y-no-estas-seguro-si-los-techos-que-tienes-funcionan-2",
+    "destination": "/blog/techo-apto-para-paneles-solares/"
+  },
+  {
+    "source": "/uncategorized/estrategias-para-combatir-el-alza-en-el-costo-de-la-energia",
+    "destination": "/blog/como-reducir-costo-energia-empresa/"
+  },
+  {
+    "source": "/uncategorized/estrategias-para-combatir-el-alza-en-el-costo-de-la-energia/attachment/estrategias-para-combatir-el-alza-en-el-costo-de-la-energia-2",
+    "destination": "/blog/como-reducir-costo-energia-empresa/"
+  },
+  {
+    "source": "/uncategorized/la-energia-solar-en-colombia-crecimiento-hacia-un-futuro-sostenible",
+    "destination": "/blog/energia-solar-en-colombia/"
+  },
+  {
+    "source": "/uncategorized/la-energia-solar-en-colombia-crecimiento-hacia-un-futuro-sostenible/attachment/la-energia-solar-en-colombia-crecimiento-hacia-un-futuro-sostenible-2",
+    "destination": "/blog/energia-solar-en-colombia/"
+  },
+  {
+    "source": "/uncategorized/sabes-como-funcionan-los-paneles-solares",
+    "destination": "/blog/como-funcionan-los-paneles-solares/"
+  },
+  {
+    "source": "/uncategorized/sabes-como-funcionan-los-paneles-solares/attachment/blog-1",
+    "destination": "/blog/como-funcionan-los-paneles-solares/"
+  },
+  {
+    "source": "/uncategorized/sabes-como-funcionan-los-paneles-solares/attachment/sabes-como-funcionan-los-paneles-solares",
+    "destination": "/blog/como-funcionan-los-paneles-solares/"
+  },
+  {
+    "source": "/uncategorized/ya-tengo-mi-proyecto-solar-instalado-como-lo-administro",
+    "destination": "/blog/mantenimiento-sistema-solar/"
+  },
+  {
+    "source": "/uncategorized/ya-tengo-mi-proyecto-solar-instalado-como-lo-administro/attachment/ya-tengo-mi-proyecto-solar-instalado-como-lo-administro-2",
+    "destination": "/blog/mantenimiento-sistema-solar/"
+  },
+  {
+    "source": "/vector-icono-de-ubicacion-png-dibujos-ubicacion-clipart-ubicacion-de-los-iconos-icono-de-ubicacion-png-y-vector-para-descargar-gratis-_-pngtree",
+    "destination": "/"
+  },
+  {
+    "source": "/whatsapp-image-2023-06-23-at-4-00-56-pm",
+    "destination": "/"
+  },
+  {
+    "source": "/whatsapp-image-2024-08-29-at-8-20-13-am-1",
+    "destination": "/proyectos/agricolas-unidas/"
+  },
+  {
+    "source": "/blog/page/2",
+    "destination": "/blog/"
+  },
+  {
+    "source": "/sitemap_index.xml",
+    "destination": "/sitemap.xml"
+  },
+  {
+    "source": "/wp-sitemap.xml",
+    "destination": "/sitemap.xml"
+  },
+  {
+    "source": "/uncategorized/la-energia-solar-en-colombia-crecimiento-hacia-un-futuro-sostenible/feed",
+    "destination": "/blog/energia-solar-en-colombia/"
+  },
+  {
+    "source": "/uncategorized/estrategias-para-combatir-el-alza-en-el-costo-de-la-energia/feed",
+    "destination": "/blog/como-reducir-costo-energia-empresa/"
+  },
+  {
+    "source": "/uncategorized/ya-tengo-mi-proyecto-solar-instalado-como-lo-administro/feed",
+    "destination": "/blog/mantenimiento-sistema-solar/"
+  },
+  {
+    "source": "/uncategorized/baterias-vs-conexion-a-la-red-cual-es-la-mejor-opcion-para-mi-proyecto-solar/feed",
+    "destination": "/blog/baterias-vs-conexion-a-red/"
+  },
+  {
+    "source": "/uncategorized/estas-pensando-en-invertir-en-un-proyecto-de-energia-solar-y-no-estas-seguro-si-los-techos-que-tienes-funcionan/feed",
+    "destination": "/blog/techo-apto-para-paneles-solares/"
+  },
+  {
+    "source": "/uncategorized/sabes-como-funcionan-los-paneles-solares/feed",
+    "destination": "/blog/como-funcionan-los-paneles-solares/"
+  },
+  {
+    "source": "/uncategorized",
+    "destination": "/blog/"
+  }
+]
