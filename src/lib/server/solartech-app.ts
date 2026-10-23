@@ -3,8 +3,8 @@ import type { ContactLead, QuoteLead } from "@/lib/lead-schema";
 import type { QuoteResult } from "@/lib/quote-engine";
 
 // Cliente de la API de solartech_app (CRM de asesores). POST /api/calcular-proyecto
-// calcula la cotización oficial, genera el PDF y crea el lead en el CRM (estado "Nuevo",
-// vendedor "Sin asignar"). Los nombres de campo son los del backend: no cambiarlos.
+// calcula la cotización oficial, genera el PDF y completa el lead en Supabase (base
+// compartida; estado "Nuevo", sin asesor). Los nombres de campo son los del backend: no cambiarlos.
 
 /** Cifras oficiales que devuelve solartech_app y que ve el visitante. */
 export type OfficialQuote = {
@@ -77,15 +77,27 @@ export function toSolartechAppFields(lead: SiteLead, result: QuoteResult): Recor
   return fields;
 }
 
-export async function sendToSolartechApp(lead: SiteLead, result: QuoteResult, invoice: File | null): Promise<SolartechAppOutcome> {
+/**
+ * `leadId`: el lead que la web ya guardó en Supabase. solartech_app comparte la misma base
+ * y completa ese registro (número, dimensionamiento, PDF) en vez de crear otro. Requiere
+ * SOLARTECH_APP_SYNC_KEY igual a WEB_SYNC_KEY del backend; sin ella crea un lead aparte.
+ */
+export async function sendToSolartechApp(lead: SiteLead, result: QuoteResult, invoice: File | null, leadId: string | null): Promise<SolartechAppOutcome> {
   const base = process.env.SOLARTECH_APP_API_URL!.replace(/\/$/, "");
+  const syncKey = process.env.SOLARTECH_APP_SYNC_KEY;
   const body = new FormData();
   for (const [k, v] of Object.entries(toSolartechAppFields(lead, result))) body.set(k, v);
-  if (invoice) body.set("facturaAdjunta", invoice);
+  if (leadId && syncKey) body.set("leadIdWeb", leadId);
+  else if (invoice) body.set("facturaAdjunta", invoice); // con leadId la factura ya está en el bucket
 
   let res: Response;
   try {
-    res = await fetch(`${base}/api/calcular-proyecto`, { method: "POST", body, signal: AbortSignal.timeout(TIMEOUT_MS) });
+    res = await fetch(`${base}/api/calcular-proyecto`, {
+      method: "POST",
+      body,
+      headers: syncKey ? { "x-solartech-web-key": syncKey } : undefined,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
   } catch (err) {
     return { status: "error", reason: err instanceof Error ? err.message : String(err) };
   }

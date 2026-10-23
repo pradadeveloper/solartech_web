@@ -173,7 +173,8 @@ export async function POST(request: NextRequest) {
   let official: OfficialQuote | null = null;
   let duplicate = false;
   if (solartechAppConfigured() && !leadsDryRun) {
-    const outcome = await sendToSolartechApp(data, result, file);
+    // Con Supabase listo, solartech_app completa este mismo lead (misma base) en vez de crear otro.
+    const outcome = await sendToSolartechApp(data, result, file, supabaseReady ? id : null);
     if (outcome.status === "ok") official = outcome.official;
     else if (outcome.status === "duplicate") duplicate = true;
     else console.error("[leads] solartech_app no recibió el lead", id, outcome.reason);
