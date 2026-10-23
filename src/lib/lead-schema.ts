@@ -26,21 +26,40 @@ const phone = z
   .transform((v) => v.replace(/[^\d+]/g, ""))
   .refine((v) => /^(\+?57)?3\d{9}$/.test(v) || /^(\+?57)?60\d{8}$/.test(v), "Ingresa un celular colombiano válido (10 dígitos)");
 
+/** Valores que guarda el CRM (solartech_app) en preferenciaContacto. */
+export const CONTACT_PREFERENCES = ["WhatsApp", "Llamada", "Correo"] as const;
+
 export const contactSchema = z.object({
   nombre: z.string().trim().min(3, "Escribe tu nombre completo").max(120),
   empresa: z.string().trim().max(160).optional(),
-  nit: z.string().trim().max(20).optional(),
+  // Cédula o NIT: el CRM la usa para detectar si el cliente ya tiene asesor.
+  nit: z
+    .string()
+    .trim()
+    .max(20)
+    .transform((v) => v.replace(/[^\d-]/g, ""))
+    .optional(),
   email: z.email("Ingresa un correo válido").max(160),
   celular: phone,
+  preferenciaContacto: z.enum(CONTACT_PREFERENCES).optional(),
   consentimiento: z.literal(true, { error: "Debes autorizar el tratamiento de datos para continuar" }),
 });
 
 export const quoteLeadSchema = z.object({ source: z.literal("cotizador") }).and(quoteStepsSchema).and(contactSchema);
 
+// El formulario de contacto pide lo mínimo que exige el CRM para registrar el lead:
+// tipo de proyecto, ubicación y factura. El servidor completa el resto con el motor de cálculo.
 export const contactLeadSchema = z
   .object({
     source: z.literal("contacto"),
-    mensaje: z.string().trim().min(10, "Cuéntanos un poco más (mínimo 10 caracteres)").max(2000),
+    clientType: z.enum(["empresa", "agro", "hogar"], { error: "Elige el tipo de proyecto" }),
+    departamento: z.string().min(1, "Elige el departamento"),
+    municipio: z.string().min(1, "Elige el municipio"),
+    billCop: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : Number(String(v).replace(/[^\d]/g, ""))),
+      z.number({ error: "Ingresa el valor aproximado de tu factura" }).min(50_000, "Revisa el valor de la factura"),
+    ),
+    mensaje: z.string().trim().max(2000).optional(),
   })
   .and(contactSchema);
 

@@ -2,6 +2,7 @@ import "server-only";
 import { Resend } from "resend";
 import { site, whatsappUrl } from "@/content/site";
 import type { QuoteResult } from "@/lib/quote-engine";
+import type { OfficialQuote } from "@/lib/server/solartech-app";
 import { formatCOP, formatNumber } from "@/lib/utils";
 
 export type LeadNotification = {
@@ -13,6 +14,8 @@ export type LeadNotification = {
   empresa?: string;
   email: string;
   celular: string;
+  nit?: string;
+  preferenciaContacto?: string;
   ciudad?: string;
   mensaje?: string;
   clientType?: string;
@@ -20,6 +23,10 @@ export type LeadNotification = {
   modelInterest?: string;
   hasInvoice: boolean;
   result?: QuoteResult;
+  /** Cotización oficial de solartech_app, si respondió. */
+  official?: OfficialQuote | null;
+  /** La cédula/NIT ya existía en solartech_app. */
+  duplicate?: boolean;
   attribution: Record<string, string>;
 };
 
@@ -32,11 +39,22 @@ async function notifyTeam(resend: Resend, lead: LeadNotification) {
   const r = lead.result;
   const rows: [string, string | undefined][] = [
     ["Prioridad", `${lead.priority.toUpperCase()} (score ${lead.score})`],
+    [
+      "solartech_app",
+      lead.official
+        ? `Cotización N.º ${lead.official.numeroCotizacion} · sin asignar`
+        : lead.duplicate
+          ? "La cédula/NIT ya existía: revisar el lead existente"
+          : "⚠ No se registró: crear el lead a mano",
+    ],
+    ["Propuesta PDF", lead.official?.pdfUrl || undefined],
     ["Origen", lead.source],
     ["Nombre", lead.nombre],
     ["Empresa", lead.empresa],
     ["Email", lead.email],
     ["Celular", lead.celular],
+    ["Cédula / NIT", lead.nit],
+    ["Prefiere contacto por", lead.preferenciaContacto],
     ["Ciudad", lead.ciudad],
     ["Tipo de cliente", lead.clientType],
     ["Factura mensual", lead.billCop ? formatCOP(lead.billCop) : undefined],
@@ -64,9 +82,18 @@ async function notifyTeam(resend: Resend, lead: LeadNotification) {
 
 /** Correo al cliente con su pre-cotización en PDF. */
 async function notifyClient(resend: Resend, lead: LeadNotification, pdf?: Buffer) {
-  const r = lead.result;
+  // Al formulario de contacto se le confirma el mensaje; las cifras son solo para el asesor.
+  const r = lead.source === "cotizador" ? lead.result : undefined;
+  const o = lead.source === "cotizador" ? lead.official : undefined;
   const first = escape(lead.nombre.split(" ")[0]);
-  const body = r
+  const body = o
+    ? `<p>Hola ${first}, gracias por usar nuestro cotizador. Tu cotización N.º ${o.numeroCotizacion}:</p>
+       <ul><li>Sistema de <b>${formatNumber(o.kwp)} kWp</b> (${o.npaneles} paneles)</li>
+       <li>Ahorro estimado de <b>${formatCOP(o.ahorroMensual)} al mes</b></li>
+       <li>Retorno aproximado de <b>${formatNumber(o.tiempoRetorno)} años</b></li></ul>
+       ${o.pdfUrl ? `<p><a href="${escape(o.pdfUrl)}">Descarga tu propuesta en PDF</a></p>` : ""}
+       <p>Un asesor te contactará para revisar tu factura y agendar la visita técnica.</p>`
+    : r
     ? `<p>Hola ${first}, gracias por usar nuestro cotizador. Adjuntamos tu pre-cotización:</p>
        <ul><li>Sistema de <b>${formatNumber(r.system.kwp)} kWp</b> (${r.system.panels} paneles)</li>
        <li>Ahorro estimado de <b>${formatCOP(r.savings.monthlyCop)} al mes</b></li>
@@ -104,7 +131,6 @@ export async function dispatchLeadNotifications(lead: LeadNotification, pdf?: Bu
   }
   const payload = { ...lead, result: lead.result ? { ...lead.result, cashFlow: undefined } : undefined };
   if (process.env.N8N_LEADS_WEBHOOK_URL) tasks.push(postWebhook(process.env.N8N_LEADS_WEBHOOK_URL, payload));
-  if (process.env.SOLARTECH_APP_LEADS_URL) tasks.push(postWebhook(process.env.SOLARTECH_APP_LEADS_URL, payload, process.env.SOLARTECH_APP_LEADS_KEY));
 
   const results = await Promise.allSettled(tasks);
   for (const r of results) if (r.status === "rejected") console.error("[leads] notificación fallida:", r.reason);

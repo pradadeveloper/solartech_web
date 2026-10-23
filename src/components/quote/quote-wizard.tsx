@@ -13,8 +13,9 @@ import { NumberInput } from "@/components/quote/number-input";
 import { LiveEstimate } from "@/components/quote/live-estimate";
 import { clientTypes, modelOptions, roofTypes, stepTitles } from "@/components/quote/options";
 import { hspByDepartment, type ClientType } from "@/config/quote-config";
-import { contactSchema, INVOICE_MAX_BYTES, INVOICE_TYPES, quoteStepsSchema, type QuoteSteps } from "@/lib/lead-schema";
+import { CONTACT_PREFERENCES, contactSchema, INVOICE_MAX_BYTES, INVOICE_TYPES, quoteStepsSchema, type QuoteSteps } from "@/lib/lead-schema";
 import { computeQuote, QuoteError, referenceTariff, type ModelInterest, type QuoteResult, type RoofType } from "@/lib/quote-engine";
+import type { OfficialQuote } from "@/lib/server/solartech-app";
 import { pushEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
@@ -41,9 +42,12 @@ export type FormValues = {
   nit: string;
   email: string;
   celular: string;
+  preferenciaContacto: ContactPreference;
   consentimiento: boolean;
   website: string; // honeypot
 };
+
+type ContactPreference = (typeof CONTACT_PREFERENCES)[number];
 
 const iconFor = { empresa: Building2, agro: Sprout, hogar: Home } as const;
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -87,6 +91,7 @@ export function QuoteWizard() {
       nit: "",
       email: "",
       celular: "",
+      preferenciaContacto: "WhatsApp",
       consentimiento: false,
       website: "",
     },
@@ -100,7 +105,8 @@ export function QuoteWizard() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ result: QuoteResult; input: QuoteSteps } | null>(null);
+  const [slow, setSlow] = useState(false);
+  const [result, setResult] = useState<{ result: QuoteResult; input: QuoteSteps; official: OfficialQuote | null; duplicate: boolean } | null>(null);
   const started = useRef(false);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -190,9 +196,21 @@ export function QuoteWizard() {
     }
     setSubmitting(true);
     setSubmitError(null);
+    // La cotización oficial puede tardar (servidor del CRM despertando + PDF): avisamos.
+    const slowTimer = setTimeout(() => setSlow(true), 6000);
     const v = getValues();
     const steps = quoteStepsSchema.parse(toStepsInput(v));
-    const payload = { source: "cotizador", ...steps, nombre: v.nombre, empresa: v.empresa, nit: v.nit, email: v.email, celular: v.celular, consentimiento: v.consentimiento };
+    const payload = {
+      source: "cotizador",
+      ...steps,
+      nombre: v.nombre,
+      empresa: v.clientType === "hogar" ? "" : v.empresa,
+      nit: v.nit,
+      email: v.email,
+      celular: v.celular,
+      preferenciaContacto: v.preferenciaContacto,
+      consentimiento: v.consentimiento,
+    };
 
     const body = new FormData();
     body.set("payload", JSON.stringify(payload));
@@ -210,27 +228,30 @@ export function QuoteWizard() {
         throw new Error(json.error ?? "No pudimos enviar tu solicitud.");
       }
       const r = json.result as QuoteResult;
-      pushEvent("quote_complete", { client_type: steps.clientType, kwp: r.system.kwp });
+      const official = (json.official ?? null) as OfficialQuote | null;
+      pushEvent("quote_complete", { client_type: steps.clientType, kwp: official?.kwp ?? r.system.kwp, official_quote: Boolean(official) });
       pushEvent("generate_lead", {
-        value: r.savings.yearlyCop,
+        value: official?.ahorroAnual ?? r.savings.yearlyCop,
         currency: "COP",
         lead_priority: json.priority,
         client_type: steps.clientType,
         model_interest: steps.modelInterest,
       });
-      setResult({ result: r, input: steps });
+      setResult({ result: r, input: steps, official, duplicate: Boolean(json.duplicate) });
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "No pudimos enviar tu solicitud.");
     } finally {
+      clearTimeout(slowTimer);
       setSubmitting(false);
+      setSlow(false);
     }
   }
 
   if (result) {
     return (
       <div ref={topRef} className="scroll-mt-28">
-        <QuoteResults result={result.result} input={result.input} name={getValues("nombre")} />
+        <QuoteResults result={result.result} input={result.input} official={result.official} duplicate={result.duplicate} name={getValues("nombre")} />
       </div>
     );
   }
@@ -448,21 +469,20 @@ export function QuoteWizard() {
                   <FieldError message={errors.nombre?.message} />
                 </div>
                 {values.clientType !== "hogar" && (
-                  <>
-                    <div>
-                      <Label htmlFor="empresa">
-                        Empresa o finca <span className="font-normal text-fg-subtle">(opcional)</span>
-                      </Label>
-                      <Input id="empresa" autoComplete="organization" {...register("empresa")} />
-                    </div>
-                    <div>
-                      <Label htmlFor="nit">
-                        NIT <span className="font-normal text-fg-subtle">(opcional)</span>
-                      </Label>
-                      <Input id="nit" inputMode="numeric" {...register("nit")} />
-                    </div>
-                  </>
+                  <div>
+                    <Label htmlFor="empresa">
+                      Empresa o finca <span className="font-normal text-fg-subtle">(opcional)</span>
+                    </Label>
+                    <Input id="empresa" autoComplete="organization" {...register("empresa")} />
+                  </div>
                 )}
+                <div className={cn(values.clientType === "hogar" && "sm:col-span-2")}>
+                  <Label htmlFor="nit">
+                    {values.clientType === "hogar" ? "Cédula" : "NIT o cédula"} <span className="font-normal text-fg-subtle">(opcional)</span>
+                  </Label>
+                  <Input id="nit" inputMode="numeric" {...register("nit")} />
+                  <Hint>Si ya hablaste con un asesor, te conecta con él.</Hint>
+                </div>
                 <div>
                   <Label htmlFor="email">Correo electrónico</Label>
                   <Input id="email" type="email" autoComplete="email" {...register("email")} aria-invalid={Boolean(errors.email)} />
@@ -474,6 +494,15 @@ export function QuoteWizard() {
                   <FieldError message={errors.celular?.message} />
                 </div>
               </div>
+
+              <fieldset>
+                <legend className="mb-2 text-sm font-semibold">¿Cómo prefieres que te contactemos?</legend>
+                <div className="grid grid-cols-3 gap-3">
+                  {CONTACT_PREFERENCES.map((p) => (
+                    <ChoiceCard key={p} name="preferenciaContacto" value={p} checked={values.preferenciaContacto === p} onChange={(val) => setValue("preferenciaContacto", val as ContactPreference)} title={p} />
+                  ))}
+                </div>
+              </fieldset>
 
               <div>
                 <label className="flex items-start gap-3 text-sm text-fg-muted">
@@ -495,6 +524,13 @@ export function QuoteWizard() {
             </>
           )}
         </div>
+
+        {submitting && slow && (
+          <p role="status" className="mt-6 flex items-start gap-2 rounded-xl border border-border bg-surface-2 px-4 py-3 text-sm text-fg-muted">
+            <Loader2 aria-hidden className="mt-0.5 size-4 shrink-0 animate-spin text-copper-text" />
+            Estamos generando tu cotización oficial y el PDF de la propuesta. Puede tardar hasta un minuto; no cierres esta página.
+          </p>
+        )}
 
         {submitError && (
           <p role="alert" className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-300">

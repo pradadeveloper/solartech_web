@@ -4,7 +4,7 @@
 
 create extension if not exists "pgcrypto";
 
-create type lead_status as enum ('nuevo', 'contactado', 'visita', 'propuesta', 'ganado', 'perdido');
+create type lead_status as enum ('nuevo', 'contactado', 'visita', 'propuesta', 'negociacion', 'ganado', 'perdido');
 create type client_type as enum ('empresa', 'agro', 'hogar');
 create type business_model_interest as enum ('epc', 'ppa', 'no_se');
 

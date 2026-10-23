@@ -1,11 +1,12 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 import { randomUUID } from "node:crypto";
 import { contactLeadSchema, INVOICE_MAX_BYTES, INVOICE_TYPES, quoteLeadSchema } from "@/lib/lead-schema";
-import { computeQuote, QuoteError, scoreLead, type QuoteResult } from "@/lib/quote-engine";
+import { computeQuote, QuoteError, referenceTariff, scoreLead, type QuoteResult } from "@/lib/quote-engine";
 import { clientIp, hashIp, leadsDryRun, rateLimited, verifyTurnstile } from "@/lib/server/security";
 import { dispatchLeadNotifications, type LeadNotification } from "@/lib/server/notify";
 import { renderQuotePdf } from "@/lib/server/quote-pdf";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendToSolartechApp, solartechAppConfigured, type OfficialQuote } from "@/lib/server/solartech-app";
 import { ATTRIBUTION_COOKIE } from "@/lib/attribution";
 import { POLICY_VERSION } from "@/content/legal";
 
@@ -16,6 +17,9 @@ import { POLICY_VERSION } from "@/content/legal";
 //   cf-turnstile-response → token anti-spam
 
 const MAX_PER_IP_PER_HOUR = 8;
+
+// La llamada a solartech_app puede tardar hasta ~75 s (cold start de Render + PDF).
+export const maxDuration = 90;
 
 function fail(status: number, error: string, issues?: unknown) {
   return NextResponse.json({ ok: false, error, issues }, { status });
@@ -58,17 +62,19 @@ export async function POST(request: NextRequest) {
     return fail(422, "La factura debe ser PDF, JPG o PNG de máximo 10 MB.");
   }
 
-  // El servidor recalcula: nunca se confía en cifras enviadas por el navegador.
-  let result: QuoteResult | undefined;
-  let score = { score: 10, priority: "media" as string };
-  if (data.source === "cotizador") {
-    try {
-      result = computeQuote(data);
-      score = scoreLead(data, result);
-    } catch (err) {
-      if (err instanceof QuoteError) return fail(422, err.message);
-      throw err;
-    }
+  // El servidor recalcula: nunca se confía en cifras enviadas por el navegador. El formulario
+  // de contacto también pasa por el motor (tarifa de referencia del departamento) porque el
+  // CRM exige consumo y tarifa para registrar el lead.
+  const quoteInput =
+    data.source === "cotizador" ? data : { ...data, tariffCopKwh: referenceTariff(data.departamento), batteries: false, modelInterest: "no_se" as const };
+  let result: QuoteResult;
+  let score: { score: number; priority: string };
+  try {
+    result = computeQuote(quoteInput);
+    score = scoreLead(quoteInput, result);
+  } catch (err) {
+    if (err instanceof QuoteError) return fail(422, err.message);
+    throw err;
   }
 
   let attribution: Record<string, string> = {};
@@ -109,19 +115,25 @@ export async function POST(request: NextRequest) {
       .insert({
         id,
         source: data.source,
-        tipo_cliente: quote?.clientType,
-        departamento: quote?.departamento,
-        ciudad: quote?.municipio,
-        factura_cop: quote?.billCop,
-        consumo_kwh: quote?.consumptionKwh ?? result?.consumptionKwh,
-        tarifa_kwh: quote?.tariffCopKwh,
+        tipo_cliente: data.clientType,
+        departamento: data.departamento,
+        ciudad: data.municipio,
+        factura_cop: data.billCop,
+        consumo_kwh: quote?.consumptionKwh ?? result.consumptionKwh,
+        tarifa_kwh: quoteInput.tariffCopKwh,
         factura_path: invoicePath,
         techo: quote?.roofType,
         area_m2: quote?.areaM2,
         baterias: quote?.batteries,
         modelo_interes: quote?.modelInterest,
-        resultado_json: result ? { ...result, cashFlow: result.cashFlow.filter((p) => p.year % 5 === 0 || p.year <= 5) } : null,
-        quote_engine_version: result?.version,
+        resultado_json: { ...result, cashFlow: result.cashFlow.filter((p) => p.year % 5 === 0 || p.year <= 5) },
+        quote_engine_version: result.version,
+        // Copia plana de las cifras clave para filtrar y sumar en consultas.
+        kwp: result.system.kwp,
+        valor_proyecto_cop: result.investment.totalCop,
+        ahorro_mensual_cop: result.savings.monthlyCop,
+        payback_meses: result.payback.years != null ? Math.round(result.payback.years * 12) : null,
+        preferencia_contacto: data.preferenciaContacto ?? null,
         nombre: data.nombre,
         empresa: data.empresa || null,
         nit: data.nit || null,
@@ -155,6 +167,30 @@ export async function POST(request: NextRequest) {
     console.info("[leads] (dev, sin Supabase) lead recibido:", { id, source: data.source, nombre: data.nombre, priority: score.priority });
   }
 
+  // CRM de asesores (solartech_app): cotización oficial + PDF. Se espera la respuesta para
+  // mostrarle al visitante las mismas cifras que verá su asesor. Si falla, el lead ya quedó
+  // en Supabase y el visitante ve la estimación de la web.
+  let official: OfficialQuote | null = null;
+  let duplicate = false;
+  if (solartechAppConfigured() && !leadsDryRun) {
+    const outcome = await sendToSolartechApp(data, result, file);
+    if (outcome.status === "ok") official = outcome.official;
+    else if (outcome.status === "duplicate") duplicate = true;
+    else console.error("[leads] solartech_app no recibió el lead", id, outcome.reason);
+
+    if (supabaseReady && outcome.status !== "error") {
+      await createAdminClient()
+        .from("leads")
+        .update({
+          synced_solartech_app_at: new Date().toISOString(),
+          numero_cotizacion: official?.numeroCotizacion ?? null,
+          propuesta_url: official?.pdfUrl || null,
+          notas: duplicate ? "La cédula/NIT ya existía en solartech_app: no se creó un lead nuevo." : null,
+        })
+        .eq("id", id);
+    }
+  }
+
   const notification: LeadNotification = {
     id,
     source: data.source,
@@ -164,24 +200,26 @@ export async function POST(request: NextRequest) {
     empresa: data.empresa,
     email: data.email,
     celular: data.celular,
-    ciudad: data.source === "cotizador" ? `${data.municipio}, ${data.departamento}` : undefined,
+    nit: data.nit || undefined,
+    preferenciaContacto: data.preferenciaContacto,
+    ciudad: `${data.municipio}, ${data.departamento}`,
     mensaje: data.source === "contacto" ? data.mensaje : undefined,
-    clientType: data.source === "cotizador" ? data.clientType : undefined,
-    billCop: data.source === "cotizador" ? data.billCop : undefined,
+    clientType: data.clientType,
+    billCop: data.billCop,
     modelInterest: data.source === "cotizador" ? data.modelInterest : undefined,
     hasInvoice: Boolean(invoicePath),
     result,
+    official,
+    duplicate,
     attribution,
   };
 
-  // Emails, PDF y webhooks después de responder: el usuario no espera por ellos.
+  // Emails y webhooks después de responder: el usuario no espera por ellos. En el cotizador,
+  // con propuesta oficial el correo lleva su enlace; sin ella, el PDF de pre-cotización de la web.
   after(async () => {
-    const pdf = result ? await renderQuotePdf({ result, name: data.nombre, city: notification.ciudad ?? "", date: new Date() }) : undefined;
-    const delivered = await dispatchLeadNotifications(notification, pdf);
-    if (delivered && supabaseReady && process.env.SOLARTECH_APP_LEADS_URL) {
-      await createAdminClient().from("leads").update({ synced_solartech_app_at: new Date().toISOString() }).eq("id", id);
-    }
+    const pdf = data.source === "cotizador" && !official ? await renderQuotePdf({ result, name: data.nombre, city: notification.ciudad ?? "", date: new Date() }) : undefined;
+    await dispatchLeadNotifications(notification, pdf);
   });
 
-  return NextResponse.json({ ok: true, id, result, priority: score.priority });
+  return NextResponse.json({ ok: true, id, result, official, duplicate, priority: score.priority });
 }

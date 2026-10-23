@@ -27,6 +27,7 @@
 - [Gestión de contenido](#gestión-de-contenido)
 - [Cotizador](#cotizador)
 - [Leads y backend](#leads-y-backend)
+- [CRM de asesores (solartech_app)](#crm-de-asesores-solartech_app)
 - [SEO](#seo)
 - [Analítica y privacidad](#analítica-y-privacidad)
 - [Diseño](#diseño)
@@ -54,7 +55,8 @@ Todo con la radiación real del municipio del visitante.
 |---|---|
 | **Cotizador** | Wizard de 4 pasos con estimación en vivo. Resultado con flujo de caja a 25 años, comparación EPC/PPA, PDF descargable y caso de éxito similar. Paso 1 embebido en el home. |
 | **Calculadora de ahorro** | Versión rápida (`/calculadora-ahorro/`): factura → ahorro, sin formulario. |
-| **Captura de leads** | API propia con validación Zod, Turnstile, honeypot, rate limit, carga de factura, scoring, correos con PDF y webhooks a n8n y `solartech_app`. |
+| **Captura de leads** | API propia con validación Zod, Turnstile, honeypot, rate limit, carga de factura, scoring, correos y webhook a n8n. Respaldo de cada lead en Supabase. |
+| **CRM** | Cada cotización entra al CRM de asesores (`solartech_app`), que devuelve la cotización oficial y su PDF al visitante. |
 | **Casos de éxito** | 35 proyectos (industria, comercio, agro, hogares y copropiedades PPA), listado con filtros y fichas con cifras. |
 | **Servicios y soluciones** | PPA, EPC, gestión de plantas; soluciones para empresas, agro, hogares e híbridos; financiación EPC / PPA / leasing. |
 | **SEO local** | 10 landings por ciudad con radiación, operador de red, escenarios de ahorro y FAQ propios. |
@@ -82,10 +84,11 @@ flowchart LR
   V[Visitante] -->|factura, ciudad| W[Cotizador / Calculadora<br/>quote-engine en el navegador]
   W -->|POST /api/leads/| API[Route Handler<br/>Zod · Turnstile · rate limit]
   API -->|recalcula| QE[quote-engine<br/>en el servidor]
-  API --> DB[(Supabase<br/>leads · facturas)]
-  API -. después de responder .-> M[Resend<br/>equipo + cliente con PDF]
+  API --> DB[(Supabase<br/>respaldo · facturas)]
+  API -->|calcular-proyecto| SA[solartech_app<br/>CRM de asesores]
+  SA -->|cotización oficial + PDF| API
+  API -. después de responder .-> M[Resend<br/>equipo + cliente]
   API -. después de responder .-> N[n8n webhook]
-  API -. después de responder .-> SA[solartech_app<br/>endpoint con clave]
   V -->|eventos| GTM[GTM · GA4 · Ads<br/>Consent Mode v2]
 ```
 
@@ -124,7 +127,7 @@ Plantilla completa en [`.env.example`](.env.example). Nunca subas `.env.local`.
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Anti-spam | ✅ |
 | `RESEND_API_KEY`, `LEADS_FROM_EMAIL`, `LEADS_NOTIFY_TO` | Correos al equipo y al cliente | ✅ |
 | `N8N_LEADS_WEBHOOK_URL` | Automatizaciones (Sheets, CRM, WhatsApp) | Opcional |
-| `SOLARTECH_APP_LEADS_URL` / `SOLARTECH_APP_LEADS_KEY` | Envío de leads al cotizador interno | Opcional |
+| `SOLARTECH_APP_API_URL` | API del CRM de asesores (`solartech_app`), **solo servidor** | ✅ |
 | `IP_HASH_SALT` | Hash de IP para rate limit sin guardar IPs | ✅ |
 | `LEADS_DRY_RUN` | Solo pruebas E2E/CI: acepta leads sin servicios externos | ❌ **Nunca** |
 
@@ -227,15 +230,45 @@ $env:NEXT_DIST_DIR = ".next-dev"; npx next dev -p 3001
 
 - **`POST /api/leads/`** (multipart): recibe el cotizador y el formulario de contacto.
   1. Validación Zod, honeypot, Turnstile, rate limit en memoria y por IP en Supabase.
-  2. Recálculo en el servidor, carga de la factura a un bucket privado, guardado del lead con consentimiento (Ley 1581) y atribución.
-  3. Después de responder: correos con PDF, n8n y `solartech_app`.
-- **`POST /api/quote-pdf/`:** genera la pre-cotización en PDF.
-- **Base de datos** (`supabase/migrations/`): tablas `leads`, `lead_events` y `staff`, con RLS. El sitio escribe solo con service role; el equipo comercial lee autenticado.
+  2. Recálculo en el servidor, carga de la factura a un bucket privado y copia de respaldo del lead en Supabase, con consentimiento (Ley 1581) y atribución.
+  3. Cotizaciones: envío a `solartech_app`, que devuelve la cotización oficial (ver abajo).
+  4. Después de responder: correos (equipo y cliente) y webhook de n8n.
+- **`POST /api/quote-pdf/`:** genera la pre-cotización en PDF de la web (solo si `solartech_app` no respondió).
+- **Base de datos de respaldo** (`supabase/migrations/`, proyecto `qiixdysbgquqauolrayg`): tabla `leads` con RLS. El sitio escribe solo con service role. Si `solartech_app` está caído, ningún lead se pierde: queda aquí con `synced_solartech_app_at` vacío.
 
 ```bash
-npx supabase link --project-ref <ref>
+npx supabase link --project-ref qiixdysbgquqauolrayg
 npx supabase db push
 ```
+
+Sin la CLI: pega en **SQL Editor** los archivos de `supabase/migrations/` en orden (primero `20261020…`, luego `20261022…`).
+
+## CRM de asesores (solartech_app)
+
+El seguimiento comercial vive en **`solartech_app`**, el CRM interno de asesores. Cada cotización del sitio entra allí como lead **Nuevo** y **Sin asignar**, con `conociste: "Página web"`, y un administrador lo asigna.
+
+- **Endpoint:** `POST ${SOLARTECH_APP_API_URL}/api/calcular-proyecto` (multipart, público). Cliente en [`src/lib/server/solartech-app.ts`](src/lib/server/solartech-app.ts).
+- **Desde el servidor:** el navegador nunca llama a `solartech_app`. Así la URL no queda expuesta y el lead pasa antes por Turnstile y por la validación del sitio.
+- **El visitante ve la cotización oficial:** número de cotización, kWp, paneles, inversores, inversión con IVA, ahorro, retorno y el PDF de `solartech_app`. Son las mismas cifras que ve el asesor. El motor de la web solo alimenta la vista previa en vivo, el área, el CO₂ y la alternativa PPA.
+- **Espera:** Render tiene *cold start*, así que la petición puede tardar hasta ~75 s. La interfaz avisa al visitante y la ruta tiene `maxDuration = 90`.
+- **Cédula/NIT ya registrada (409):** el visitante ve "Ya tienes un asesor asignado", sin datos internos, junto a la estimación de la web.
+- **Falla o *timeout*:** el lead queda en Supabase y el visitante ve la estimación de la web. El correo al equipo lo marca con "⚠ No se registró: crear el lead a mano".
+- **Formulario de contacto:** también va a `solartech_app`. Pide tipo de proyecto, departamento, municipio y valor de la factura, lo mínimo que exige el CRM. El servidor completa el consumo con la tarifa de referencia del departamento. Al visitante se le confirma el mensaje y lo lleva a `/gracias/`.
+- **Datos que el backend aún no guarda:** `empresa`, `mensaje`, `modeloInteres` y `origenWeb` se envían igual. Quedarán registrados cuando `solartech_app` agregue esas columnas.
+
+| Web | solartech_app |
+|---|---|
+| `municipio, departamento` | `ubicacion` · `ciudadSolar` = municipio |
+| HSP del municipio (`hsp-colombia.json`) | `radiacionSolar` |
+| Consumo calculado · tarifa · factura | `consumoKwh` · `costoKwh` · `valorMensual` |
+| Área (opcional) | `areaDisponible` (`0` = sin límite) |
+| Hogar / Empresa / Agro | `tipoSolicitud`: Hogar / Empresa / Comercial |
+| Lámina / Teja de barro / Losa / Suelo | `tipoTecho`: Termoacústica / Teja de barro / Losa / Suelo |
+| Baterías sí / no | `sistemaInteres`: Híbrido / Interconectado |
+| NIT / cédula | `identificacion` (detecta duplicados) |
+| WhatsApp / Llamada / Correo | `preferenciaContacto` |
+| Factura adjunta | `facturaAdjunta` |
+| Empresa · mensaje · EPC/PPA · formulario de origen | `empresa` · `mensaje` · `modeloInteres` · `origenWeb` (pendientes en el backend) |
 
 ## SEO
 

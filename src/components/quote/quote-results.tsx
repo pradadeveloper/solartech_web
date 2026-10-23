@@ -7,21 +7,35 @@ import { Delta, Eyebrow } from "@/components/ui/badge";
 import { CashflowChart } from "@/components/quote/cashflow-chart";
 import type { QuoteSteps } from "@/lib/lead-schema";
 import type { QuoteResult } from "@/lib/quote-engine";
+import type { OfficialQuote } from "@/lib/server/solartech-app";
 import { whatsappUrl } from "@/content/site";
 import { pushEvent } from "@/lib/analytics";
 import { cn, formatCOP, formatCOPCompact, formatNumber } from "@/lib/utils";
 
-type Props = { result: QuoteResult; input: QuoteSteps; name: string };
+type Props = {
+  result: QuoteResult;
+  input: QuoteSteps;
+  name: string;
+  /** Cotización oficial de solartech_app. Si llega, sus cifras reemplazan las de la web. */
+  official?: OfficialQuote | null;
+  /** La cédula/NIT ya tenía asesor en el CRM. */
+  duplicate?: boolean;
+};
 
 export const QUOTE_DISCLAIMER = "Pre-cotización referencial. La propuesta final requiere visita técnica y análisis de factura.";
 
-export function QuoteResults({ result: r, input, name }: Props) {
+export function QuoteResults({ result: r, input, name, official: o, duplicate }: Props) {
   const [withTax, setWithTax] = useState(r.tax.eligible);
   const [downloading, setDownloading] = useState(false);
   const firstName = name.split(" ")[0];
   const payback = withTax && r.payback.yearsWithTax ? r.payback.yearsWithTax : r.payback.years;
 
-  const summary = `sistema de ${formatNumber(r.system.kwp)} kWp en ${input.municipio}, ahorro estimado de ${formatCOP(r.savings.monthlyCop)} al mes`;
+  const kwp = o?.kwp ?? r.system.kwp;
+  const monthlySavings = o?.ahorroMensual ?? r.savings.monthlyCop;
+  // Cifras físicas de la web escaladas al tamaño oficial (área, CO₂): misma proporción por kWp.
+  const scale = o && r.system.kwp > 0 ? o.kwp / r.system.kwp : 1;
+
+  const summary = `${o ? `cotización N.º ${o.numeroCotizacion}, ` : ""}sistema de ${formatNumber(kwp)} kWp en ${input.municipio}, ahorro estimado de ${formatCOP(monthlySavings)} al mes`;
   const whatsappAdvisor = whatsappUrl(`Hola Solartech, soy ${name}. Hice una pre-cotización en la web: ${summary}. Quiero hablar con un asesor.`);
   const whatsappVisit = whatsappUrl(`Hola Solartech, soy ${name}. Quiero agendar la visita técnica para mi proyecto (${summary}).`);
 
@@ -42,7 +56,16 @@ export function QuoteResults({ result: r, input, name }: Props) {
     }
   }
 
-  const kpis = [
+  const officialKpis = o && [
+    { label: "Sistema solar", value: `${formatNumber(o.kwp)} kWp`, sub: `${o.npaneles} paneles de ${r.system.panelWp} W` },
+    { label: "Inversores", value: formatNumber(o.ninversores, 0), sub: "según la potencia del sistema" },
+    { label: "Área requerida", value: `${formatNumber(r.system.areaM2 * scale, 0)} m²`, sub: "de cubierta o terreno" },
+    { label: "Generación", value: o.generacionMes ? `${formatNumber(o.generacionMes, 0)} kWh` : `${formatNumber(r.energy.generationKwhMonth * scale, 0)} kWh`, sub: "por mes" },
+    { label: "Ahorro mensual", value: formatCOPCompact(o.ahorroMensual), sub: "desde el primer mes", positive: true },
+    { label: "CO₂ evitado", value: `${formatNumber(r.environment.co2TonYear * scale)} t/año`, sub: `≈ ${formatNumber(r.environment.trees * scale, 0)} árboles` },
+  ];
+
+  const kpis = officialKpis || [
     { label: "Sistema solar", value: `${formatNumber(r.system.kwp)} kWp`, sub: `${r.system.panels} paneles de ${r.system.panelWp} W` },
     { label: "Área requerida", value: `${formatNumber(r.system.areaM2, 0)} m²`, sub: `Cubre ${Math.round(r.energy.coverage * 100)} % de tu consumo` },
     { label: "Generación", value: `${formatNumber(r.energy.generationKwhMonth, 0)} kWh`, sub: "por mes" },
@@ -56,32 +79,64 @@ export function QuoteResults({ result: r, input, name }: Props) {
   return (
     <div className="space-y-6">
       <div className="rounded-3xl border border-copper/40 bg-surface p-6 sm:p-8">
-        <Eyebrow live>Pre-cotización lista</Eyebrow>
+        <Eyebrow live>{o ? `Cotización N.º ${o.numeroCotizacion}` : "Pre-cotización lista"}</Eyebrow>
         <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">
-          {firstName}, tu planta solar podría ahorrarte <span className="text-positive">{formatCOP(r.savings.monthlyCop)}</span> al mes
+          {firstName}, tu planta solar podría ahorrarte <span className="text-positive">{formatCOP(monthlySavings)}</span> al mes
         </h2>
-        <p className="mt-3 text-fg-muted">Te enviamos este resumen y el PDF a tu correo. Un asesor te contactará para revisar tu factura.</p>
+        <p className="mt-3 text-fg-muted">
+          {o
+            ? "Te enviamos la propuesta en PDF a tu correo. Un asesor te contactará para revisar tu factura y agendar la visita técnica."
+            : "Te enviamos este resumen y el PDF a tu correo. Un asesor te contactará para revisar tu factura."}
+        </p>
+        {duplicate && (
+          <p role="status" className="mt-4 flex items-start gap-2 rounded-xl border border-border bg-surface-2 px-4 py-3 text-sm text-fg-muted">
+            <Info aria-hidden className="mt-0.5 size-4 shrink-0 text-copper-text" />
+            Ya tienes un asesor asignado en Solartech. Te contactará pronto con tu propuesta.
+          </p>
+        )}
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-surface-2 p-5">
-            <p className="text-xs text-fg-muted">Inversión estimada</p>
-            <p className="mt-1 font-mono text-2xl font-semibold tabular">
-              {formatCOPCompact(r.investment.lowCop)} – {formatCOPCompact(r.investment.highCop)}
-            </p>
-            <p className="mt-1 text-xs text-fg-subtle">
-              Rango ±15 %, IVA incluido{r.investment.batteryKwh > 0 ? ` · incluye ${r.investment.batteryKwh} kWh de baterías` : ""}
-            </p>
-          </div>
-          <div className="rounded-2xl bg-surface-2 p-5">
-            <p className="text-xs text-fg-muted">Retorno de la inversión</p>
-            <p className="mt-1 font-mono text-2xl font-semibold tabular">{payback ? `${formatNumber(payback)} años` : "Más de 25 años"}</p>
-            <p className="mt-1 text-xs text-fg-subtle">{withTax && r.payback.yearsWithTax ? "Con beneficio tributario" : "Sin beneficio tributario"}</p>
-          </div>
-          <div className="rounded-2xl bg-surface-2 p-5">
-            <p className="text-xs text-fg-muted">Ahorro anual (año 1)</p>
-            <p className="mt-1 font-mono text-2xl font-semibold text-positive tabular">{formatCOPCompact(r.savings.yearlyCop)}</p>
-            <p className="mt-1 text-xs text-fg-subtle">Crece con el alza de la tarifa</p>
-          </div>
+          {o ? (
+            <>
+              <div className="rounded-2xl bg-surface-2 p-5">
+                <p className="text-xs text-fg-muted">Inversión del proyecto</p>
+                <p className="mt-1 font-mono text-2xl font-semibold tabular">{formatCOPCompact(o.costoProyectoMasIva)}</p>
+                <p className="mt-1 text-xs text-fg-subtle">IVA incluido · sujeta a visita técnica</p>
+              </div>
+              <div className="rounded-2xl bg-surface-2 p-5">
+                <p className="text-xs text-fg-muted">Retorno de la inversión</p>
+                <p className="mt-1 font-mono text-2xl font-semibold tabular">{o.tiempoRetorno > 0 ? `${formatNumber(o.tiempoRetorno)} años` : "—"}</p>
+                <p className="mt-1 text-xs text-fg-subtle">Según el ahorro en tu factura</p>
+              </div>
+              <div className="rounded-2xl bg-surface-2 p-5">
+                <p className="text-xs text-fg-muted">Ahorro anual (año 1)</p>
+                <p className="mt-1 font-mono text-2xl font-semibold text-positive tabular">{formatCOPCompact(o.ahorroAnual)}</p>
+                <p className="mt-1 text-xs text-fg-subtle">Crece con el alza de la tarifa</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="rounded-2xl bg-surface-2 p-5">
+                <p className="text-xs text-fg-muted">Inversión estimada</p>
+                <p className="mt-1 font-mono text-2xl font-semibold tabular">
+                  {formatCOPCompact(r.investment.lowCop)} – {formatCOPCompact(r.investment.highCop)}
+                </p>
+                <p className="mt-1 text-xs text-fg-subtle">
+                  Rango ±15 %, IVA incluido{r.investment.batteryKwh > 0 ? ` · incluye ${r.investment.batteryKwh} kWh de baterías` : ""}
+                </p>
+              </div>
+              <div className="rounded-2xl bg-surface-2 p-5">
+                <p className="text-xs text-fg-muted">Retorno de la inversión</p>
+                <p className="mt-1 font-mono text-2xl font-semibold tabular">{payback ? `${formatNumber(payback)} años` : "Más de 25 años"}</p>
+                <p className="mt-1 text-xs text-fg-subtle">{withTax && r.payback.yearsWithTax ? "Con beneficio tributario" : "Sin beneficio tributario"}</p>
+              </div>
+              <div className="rounded-2xl bg-surface-2 p-5">
+                <p className="text-xs text-fg-muted">Ahorro anual (año 1)</p>
+                <p className="mt-1 font-mono text-2xl font-semibold text-positive tabular">{formatCOPCompact(r.savings.yearlyCop)}</p>
+                <p className="mt-1 text-xs text-fg-subtle">Crece con el alza de la tarifa</p>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
@@ -89,10 +144,17 @@ export function QuoteResults({ result: r, input, name }: Props) {
             <MessageCircle aria-hidden className="size-4" />
             Hablar con un asesor
           </ButtonLink>
-          <Button variant="secondary" size="lg" onClick={downloadPdf} disabled={downloading}>
-            {downloading ? <Loader2 aria-hidden className="size-4 animate-spin" /> : <Download aria-hidden className="size-4" />}
-            Descargar PDF
-          </Button>
+          {o?.pdfUrl ? (
+            <ButtonLink href={o.pdfUrl} external variant="secondary" size="lg" onClick={() => pushEvent("pdf_download", { kwp: o.kwp, official: true })}>
+              <Download aria-hidden className="size-4" />
+              Descargar propuesta
+            </ButtonLink>
+          ) : (
+            <Button variant="secondary" size="lg" onClick={downloadPdf} disabled={downloading}>
+              {downloading ? <Loader2 aria-hidden className="size-4 animate-spin" /> : <Download aria-hidden className="size-4" />}
+              Descargar PDF
+            </Button>
+          )}
           <ButtonLink href={whatsappVisit} external variant="secondary" size="lg" onClick={() => pushEvent("whatsapp_click", { location: "quote_result_visit" })}>
             <CalendarCheck aria-hidden className="size-4" />
             Agendar visita técnica
@@ -100,8 +162,10 @@ export function QuoteResults({ result: r, input, name }: Props) {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-        <div className="rounded-3xl border border-border bg-surface p-6 sm:p-8">
+      <div className={cn("grid gap-6", !o && "lg:grid-cols-[1.5fr_1fr]")}>
+        {/* La gráfica de 25 años sale del motor de la web: con cotización oficial no se muestra
+            para no contradecir el retorno del PDF. */}
+        {!o && <div className="rounded-3xl border border-border bg-surface p-6 sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold">Flujo de caja acumulado</h3>
@@ -117,9 +181,9 @@ export function QuoteResults({ result: r, input, name }: Props) {
           <div className="mt-6">
             <CashflowChart data={r.cashFlow} withTax={withTax} />
           </div>
-        </div>
+        </div>}
 
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className={cn("grid grid-cols-2 gap-3", o && "md:grid-cols-3")}>
           {kpis.map((k) => (
             <li key={k.label} className="rounded-2xl border border-border bg-surface p-4">
               <p className="text-[11px] text-fg-muted">{k.label}</p>
@@ -133,7 +197,7 @@ export function QuoteResults({ result: r, input, name }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {r.ppa.available && (
           <div className="rounded-3xl border border-border bg-surface p-6 sm:p-8">
-            <p className="font-mono text-[11px] tracking-[0.12em] text-fg-subtle uppercase">Alternativa sin inversión</p>
+            <p className="font-mono text-[11px] tracking-[0.12em] text-fg-subtle uppercase">Alternativa sin inversión{o ? " · estimado" : ""}</p>
             <h3 className="mt-3 text-xl font-bold">PPA: inversión $0</h3>
             <p className="mt-2 text-sm text-fg-muted">Instalamos y operamos la planta. Pagas la energía solar con descuento sobre tu tarifa actual.</p>
             <dl className="mt-5 divide-y divide-border text-sm">
@@ -192,8 +256,17 @@ export function QuoteResults({ result: r, input, name }: Props) {
       <p className="flex items-start gap-2 rounded-2xl border border-border bg-surface-2 p-4 text-xs text-fg-muted">
         <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
         <span>
-          {QUOTE_DISCLAIMER} El beneficio tributario es informativo: requiere certificación de la UPME y depende de tu situación como declarante de renta. Parámetros{" "}
-          {r.version}.
+          {o ? (
+            <>
+              Cotización N.º {o.numeroCotizacion} generada por el cotizador de Solartech. La propuesta final requiere visita técnica y análisis de factura. La
+              alternativa PPA es un estimado de la web.
+            </>
+          ) : (
+            <>
+              {QUOTE_DISCLAIMER} El beneficio tributario es informativo: requiere certificación de la UPME y depende de tu situación como declarante de renta. Parámetros{" "}
+              {r.version}.
+            </>
+          )}
         </span>
       </p>
     </div>
