@@ -9,7 +9,6 @@ import { AnimatedNumber } from "@/components/ui/animated-number";
 import { ExecutionSteps } from "@/components/sections/execution-steps";
 import { ClientLogos } from "@/components/sections/client-logos";
 import { partners } from "@/content/partners";
-import { clients } from "@/content/clients";
 import { company } from "@/content/sales-deck";
 import { pillars } from "@/content/services";
 import { portfolioStats } from "@/content/projects";
@@ -199,7 +198,7 @@ export default function QuienesSomosPage() {
       </Section>
 
       <Section id="clientes" eyebrow="Clientes" title="Empresas que ya generan su energía con Solartech" description="Industria, comercio, colegios, hoteles, agro y copropiedades que confiaron en nosotros.">
-        <ClientLogos initial={clients.length} />
+        <ClientLogos variant="grid" />
       </Section>
 
       <Section id="aliados" tone="muted" eyebrow="Aliados y marcas" title="Trabajamos con banca y fabricantes líderes" description="Financiación con la banca aliada y equipos de fabricantes reconocidos en paneles, inversores y estructuras.">

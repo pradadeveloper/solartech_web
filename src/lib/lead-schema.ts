@@ -1,5 +1,6 @@
 // Validación compartida: el wizard (react-hook-form) y /api/leads usan los mismos esquemas.
 import { z } from "zod";
+import { CLIENT_TYPES } from "@/config/quote-config";
 
 const optionalNumber = z.preprocess(
   (v) => (v === "" || v === null || v === undefined ? undefined : Number(String(v).replace(/[^\d.]/g, ""))),
@@ -8,7 +9,7 @@ const optionalNumber = z.preprocess(
 
 export const quoteStepsSchema = z
   .object({
-    clientType: z.enum(["empresa", "agro", "hogar"], { error: "Elige el tipo de cliente" }),
+    clientType: z.enum(CLIENT_TYPES, { error: "Elige el tipo de cliente" }),
     departamento: z.string().min(1, "Elige el departamento"),
     municipio: z.string().min(1, "Elige el municipio"),
     billCop: optionalNumber,
@@ -52,7 +53,7 @@ export const quoteLeadSchema = z.object({ source: z.literal("cotizador") }).and(
 export const contactLeadSchema = z
   .object({
     source: z.literal("contacto"),
-    clientType: z.enum(["empresa", "agro", "hogar"], { error: "Elige el tipo de proyecto" }),
+    clientType: z.enum(CLIENT_TYPES, { error: "Elige el tipo de proyecto" }),
     departamento: z.string().min(1, "Elige el departamento"),
     municipio: z.string().min(1, "Elige el municipio"),
     billCop: z.preprocess(

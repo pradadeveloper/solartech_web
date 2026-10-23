@@ -198,9 +198,10 @@ export function ppaOffer(generationKwhMonth: number, tariff: number, kwp: number
 // ---------- Prueba social ----------
 
 const sectorsByClient: Record<ClientType, Project["sector"][]> = {
-  empresa: ["industria", "comercio"],
-  agro: ["agro"],
   hogar: ["residencial", "copropiedad"],
+  comercial: ["comercio", "agro"],
+  empresa: ["industria"],
+  gran_escala: ["industria", "comercio", "agro"],
 };
 
 /** Caso de éxito más parecido: mismo sector y tamaño más cercano (en escala logarítmica).

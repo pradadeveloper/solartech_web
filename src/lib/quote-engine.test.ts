@@ -94,10 +94,12 @@ describe("proyección financiera", () => {
     expect(withTax).toBeLessThan(base);
   });
 
-  it("el beneficio tributario solo cuenta para empresa y agro", () => {
+  it("el beneficio tributario cuenta para todos menos hogar", () => {
     const base: QuoteInput = { clientType: "hogar", departamento: "Antioquia", municipio: "Medellín", billCop: 1_500_000, tariffCopKwh: 830, batteries: false, modelInterest: "epc" };
     expect(computeQuote(base).payback.yearsWithTax).toBeNull();
-    expect(computeQuote({ ...base, clientType: "empresa" }).payback.yearsWithTax).not.toBeNull();
+    for (const clientType of ["comercial", "empresa", "gran_escala"] as const) {
+      expect(computeQuote({ ...base, clientType }).payback.yearsWithTax).not.toBeNull();
+    }
   });
 
   it("deducción = 50 % de la inversión antes de IVA y ahorro de impuesto = deducción × 35 %", () => {
@@ -107,7 +109,7 @@ describe("proyección financiera", () => {
   });
 
   it("las baterías suben la inversión y alargan el retorno", () => {
-    const base: QuoteInput = { clientType: "agro", departamento: "Antioquia", municipio: "Támesis", billCop: 5_000_000, tariffCopKwh: 830, batteries: false, modelInterest: "epc" };
+    const base: QuoteInput = { clientType: "comercial", departamento: "Antioquia", municipio: "Támesis", billCop: 5_000_000, tariffCopKwh: 830, batteries: false, modelInterest: "epc" };
     const a = computeQuote(base);
     const b = computeQuote({ ...base, batteries: true });
     expect(b.investment.batteriesCop).toBeGreaterThan(0);
@@ -126,7 +128,8 @@ describe("validación de cordura contra proyectos reales", () => {
   });
 
   it("muestra el caso de éxito más parecido por sector y tamaño", () => {
-    expect(similarProject("agro", 130)?.slug).toBe("agricolas-unidas");
+    // Comercial: comercio y fincas de ~130 kWp con ahorro documentado.
+    expect(["caribe-motor", "agricolas-unidas"]).toContain(similarProject("comercial", 130)?.slug);
     expect(similarProject("empresa", 500)?.slug).toBe("absorbentes-de-colombia");
     // Hogares: casas y copropiedades; se prefiere el que tiene ahorro mensual documentado.
     const hogar = similarProject("hogar", 30, projects);

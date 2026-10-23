@@ -1,37 +1,39 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { projectPlace, projects, type BusinessModel } from "@/content/projects";
 import { services, type ServiceKey } from "@/content/services";
-import { cn } from "@/lib/utils";
+import { BusinessModelsDeck, type DeckModel } from "@/components/sections/business-models-deck";
 
-/** Los 3 modelos como "productos financieros" comparables. */
+// Proyectos que ilustra cada modelo. Gestión de plantas no tiene casos propios: muestra las
+// plantas más grandes que diseñó y construyó Solartech, con un título que no promete más.
+const showcase: Record<ServiceKey, { models: BusinessModel[]; label: string }> = {
+  ppa: { models: ["PPA"], label: "Proyectos PPA más grandes" },
+  epc: { models: ["EPC"], label: "Proyectos EPC más grandes" },
+  "gestion-de-plantas": { models: ["EPC", "PPA"], label: "Plantas que diseñamos y construimos" },
+};
+
+/** Los 3 modelos como "productos financieros" comparables. Al pasar el mouse, cada uno se
+    despliega con fotos de sus proyectos más grandes (ver BusinessModelsDeck). */
 export function BusinessModels({ exclude, headingLevel = "h3" }: { exclude?: ServiceKey; headingLevel?: "h2" | "h3" }) {
-  const Heading = headingLevel;
-  const list = services.filter((s) => s.key !== exclude);
-  return (
-    <ul className={cn("grid gap-4", list.length === 3 ? "lg:grid-cols-3" : "md:grid-cols-2")}>
-      {list.map((s, i) => (
-        <li key={s.key}>
-          <Link
-            href={s.path}
-            className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-surface p-6 transition-colors hover:border-copper/60 sm:p-8"
-          >
-            <div aria-hidden className="glow-copper pointer-events-none absolute inset-x-0 -top-24 h-48 opacity-0 transition-opacity group-hover:opacity-100" />
-            <div className="relative flex items-start justify-between gap-4">
-              <span className="font-mono text-xs text-fg-subtle">0{i + 1}</span>
-              <ArrowUpRight aria-hidden className="size-5 text-fg-subtle transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-copper-text" />
-            </div>
-            <Heading className="relative mt-6 text-2xl font-extrabold">{s.shortName}</Heading>
-            <p className="relative mt-1 text-sm font-semibold text-copper-text">{s.tagline}</p>
-            <p className="relative mt-4 text-sm text-fg-muted">{s.summary}</p>
-            <div className="relative mt-auto pt-8">
-              <div className="rounded-2xl border border-border bg-surface-2 p-4">
-                <p className="text-[11px] text-fg-muted">{s.highlight.label}</p>
-                <p className="mt-1 font-mono text-2xl font-semibold tabular">{s.highlight.value}</p>
-              </div>
-            </div>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
+  const bySize = [...projects].sort((a, b) => b.kwp - a.kwp);
+  const used = new Set<string>();
+  const models: DeckModel[] = services.map((s) => {
+    const { models: wanted, label } = showcase[s.key];
+    // Gestión toma plantas que no aparezcan ya en las otras tarjetas, para no repetir fotos.
+    const pool = bySize.filter((p) => wanted.includes(p.model) && (s.key !== "gestion-de-plantas" || !used.has(p.slug)));
+    const picked = pool.slice(0, 4);
+    if (s.key !== "gestion-de-plantas") picked.forEach((p) => used.add(p.slug));
+    return {
+      key: s.key,
+      path: s.path,
+      shortName: s.shortName,
+      tagline: s.tagline,
+      summary: s.summary,
+      highlight: s.highlight,
+      // Condiciones en reposo; se omiten las que ya dice la cifra destacada.
+      terms: s.terms.filter((t) => !["Inversión", "Retorno"].includes(t.label)).slice(0, 3),
+      showcaseLabel: label,
+      projects: picked.map((p) => ({ slug: p.slug, name: p.name, place: projectPlace(p), kwp: p.kwp, image: p.image, imageAlt: p.imageAlt })),
+    };
+  });
+
+  return <BusinessModelsDeck models={models.filter((m) => m.key !== exclude)} headingLevel={headingLevel} />;
 }

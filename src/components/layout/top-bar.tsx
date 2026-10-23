@@ -3,17 +3,17 @@ import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { site } from "@/content/site";
 
-/** Barra superior: grupo Ferragro, teléfono y switch de tema. */
+/** Barra superior: marca de Ferragro S.A.S, teléfono y switch de tema. */
 export function TopBar() {
   return (
     <div className="border-b border-border bg-surface/80 text-xs text-fg-muted">
       <Container className="flex h-9 items-center justify-between gap-4">
         <p className="truncate">
-          Parte del{" "}
-          <a href={site.parent.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-fg hover:text-copper-text">
-            grupo Ferragro
+          Marca solar registrada de{" "}
+          <a href={site.parent.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-positive hover:underline">
+            Ferragro S.A.S
           </a>
-          <span className="hidden sm:inline"> · Proyectos solares en toda Colombia</span>
+          <span className="hidden sm:inline"> · Proyectos solares en toda Colombia.</span>
         </p>
         <div className="flex items-center gap-4">
           <a

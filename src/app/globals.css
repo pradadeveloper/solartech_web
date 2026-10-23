@@ -88,6 +88,32 @@
   to { transform: translateX(-50%); }
 }
 
+/* Barra de avance de la vitrina de proyectos (scaleX: no recalcula layout). */
+@keyframes rotator-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Energía que recorre el diagrama de "Cómo funciona": guiones que avanzan (16px = un ciclo). */
+@keyframes energy-x {
+  to { background-position: 16px 0; }
+}
+@keyframes energy-y {
+  to { background-position: 0 16px; }
+}
+
+/* Cifra que cambia en un simulador: pequeño salto para que se note. */
+@keyframes value-pop {
+  from { transform: translateY(-4px); opacity: 0.4; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Desplazamiento lento de la foto de fondo de la banda de conversión. */
+@keyframes cta-drift {
+  from { transform: scale(1.05) translate3d(0, 0, 0); }
+  to { transform: scale(1.12) translate3d(-2%, -2%, 0); }
+}
+
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(0.85); }

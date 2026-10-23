@@ -10,7 +10,7 @@ test("calculadora: factura → ahorro en vivo → cotizador con los datos", asyn
   const result = page.getByRole("region", { name: "Tu ahorro estimado" });
   await expect(result.getByText("Podrías ahorrar cada mes")).toBeVisible();
 
-  await page.getByText("Agro", { exact: true }).click();
+  await page.getByText("Comercial", { exact: true }).click();
   await page.getByLabel("Departamento").selectOption("Bolívar");
   await page.getByLabel("Tu factura de energía mensual").fill("20000000");
   await expect(result.getByText(/kWp/)).toBeVisible();
@@ -21,6 +21,6 @@ test("calculadora: factura → ahorro en vivo → cotizador con los datos", asyn
 
   await page.getByRole("button", { name: "$15M" }).click();
   await page.getByRole("link", { name: "Ver inversión y retorno" }).click();
-  await expect(page).toHaveURL(/\/cotizador\/\?tipo=agro&dep=Bol%C3%ADvar.*factura=15000000/);
+  await expect(page).toHaveURL(/\/cotizador\/\?tipo=comercial&dep=Bol%C3%ADvar.*factura=15000000/);
   await expect(page.getByText("Paso 2 de 4")).toBeVisible();
 });

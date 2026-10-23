@@ -30,7 +30,8 @@ export type SiteLead = QuoteLead | ContactLead;
 // Render duerme el servicio: el primer request puede tardar 30–60 s, más la generación del PDF.
 const TIMEOUT_MS = 75_000;
 
-const CLIENT_TYPE: Record<SiteLead["clientType"], string> = { hogar: "Hogar", empresa: "Empresa", agro: "Comercial" };
+// Valores exactos del selector "Tipo de proyecto" del CRM.
+const CLIENT_TYPE: Record<SiteLead["clientType"], string> = { hogar: "Hogar", comercial: "Comercial", empresa: "Empresa", gran_escala: "Gran Escala" };
 const ROOF: Record<NonNullable<QuoteLead["roofType"]>, string> = { lamina: "Termoacústica", teja_barro: "Teja de barro", losa: "Losa", suelo: "Suelo" };
 const MODEL: Record<QuoteLead["modelInterest"], string> = { epc: "Compra (EPC)", ppa: "PPA (sin inversión)", no_se: "Por definir" };
 const SOURCE: Record<SiteLead["source"], string> = { cotizador: "Cotizador web", contacto: "Formulario de contacto web" };

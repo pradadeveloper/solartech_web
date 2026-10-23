@@ -1,11 +1,18 @@
-import type { ClientType } from "@/config/quote-config";
+import { Factory, Home, SolarPanel, Store, type LucideIcon } from "lucide-react";
+import { CLIENT_TYPES, type ClientType } from "@/config/quote-config";
 import type { ModelInterest, RoofType } from "@/lib/quote-engine";
 
-export const clientTypes: { value: ClientType; title: string; description: string }[] = [
-  { value: "empresa", title: "Empresa", description: "Industria, comercio o servicios" },
-  { value: "agro", title: "Agro", description: "Fincas, riego, cuartos fríos" },
-  { value: "hogar", title: "Hogar", description: "Casa o copropiedad" },
+// Mismo orden y mismos tipos que el CRM (solartech_app).
+export const clientTypes: { value: ClientType; title: string; description: string; icon: LucideIcon }[] = [
+  { value: "hogar", title: "Hogar", description: "Casa o copropiedad", icon: Home },
+  { value: "comercial", title: "Comercial", description: "Comercio, servicios, fincas", icon: Store },
+  { value: "empresa", title: "Empresa", description: "Industria y manufactura", icon: Factory },
+  { value: "gran_escala", title: "Granja solar", description: "Proyectos a gran escala", icon: SolarPanel },
 ];
+
+export function isClientType(value: string | null): value is ClientType {
+  return CLIENT_TYPES.includes(value as ClientType);
+}
 
 export const roofTypes: { value: RoofType; title: string }[] = [
   { value: "lamina", title: "Lámina / metálico" },

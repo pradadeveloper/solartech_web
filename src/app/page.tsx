@@ -13,7 +13,8 @@ import { ClientLogos } from "@/components/sections/client-logos";
 import { FaqList } from "@/components/sections/faq-list";
 import { CtaBand } from "@/components/sections/cta-band";
 import { ButtonLink } from "@/components/ui/button";
-import { projects } from "@/content/projects";
+import { ProjectRotator, type RotatorSlide } from "@/components/sections/project-rotator";
+import { hasProjectPage, projectPlace, projects } from "@/content/projects";
 import { faqs } from "@/content/faq";
 import { pageMetadata } from "@/lib/seo";
 import { getAllPosts } from "@/lib/blog";
@@ -32,11 +33,19 @@ export const metadata = {
 
 export default function HomePage() {
   const latestPosts = getAllPosts().slice(0, 3);
-  // Destacados: proyectos con ahorro y retorno documentados, de mayor a menor ahorro.
-  const featured = projects
-    .filter((p) => p.paybackYears !== null && p.monthlySavingsCop !== null)
-    .sort((a, b) => (b.monthlySavingsCop ?? 0) - (a.monthlySavingsCop ?? 0))
-    .slice(0, 6);
+  // Destacados: los proyectos más grandes (kWp), para mostrar la escala que construye Solartech.
+  const bySize = [...projects].sort((a, b) => b.kwp - a.kwp);
+  const featured = bySize.slice(0, 6);
+  const rotatorSlides: RotatorSlide[] = bySize.slice(0, 10).map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    place: projectPlace(p),
+    kwp: p.kwp,
+    model: p.model,
+    image: p.image,
+    imageAlt: p.imageAlt,
+    href: hasProjectPage(p) ? `/proyectos/${p.slug}/` : undefined,
+  }));
 
   return (
     <>
@@ -79,8 +88,12 @@ export default function HomePage() {
           </ButtonLink>
         }
       >
-        <div className="mb-10 max-w-2xl">
-          <PortfolioPanel />
+        {/* Panel del portafolio sobre una vitrina de fotos que rota detrás (a la derecha en escritorio). */}
+        <div className="relative mb-10 lg:flex lg:min-h-[620px] lg:items-center">
+          <ProjectRotator slides={rotatorSlides} className="relative aspect-[4/3] sm:aspect-[16/9] lg:absolute lg:inset-y-0 lg:right-0 lg:aspect-auto lg:w-[66%]" />
+          <div className="relative z-10 mt-4 lg:mt-0 lg:w-[46%]">
+            <PortfolioPanel />
+          </div>
         </div>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((p) => (

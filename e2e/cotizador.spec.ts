@@ -13,13 +13,13 @@ async function events(page: Page) {
 test("flujo completo: hero → cotizador → resultado", async ({ page }) => {
   await page.goto("/");
   const starter = page.locator("form", { has: page.getByText("Calcula cuánto ahorrarías") });
-  await starter.getByText("Agro").click();
+  await starter.getByText("Comercial").click();
   await starter.getByLabel("Municipio").selectOption("Támesis");
   await starter.getByLabel("Factura de energía mensual").fill("8000000");
   await starter.getByRole("button", { name: "Calcular mi ahorro" }).click();
 
   // Llega al paso 2 con los datos del hero.
-  await expect(page).toHaveURL(/\/cotizador\/\?tipo=agro/);
+  await expect(page).toHaveURL(/\/cotizador\/\?tipo=comercial/);
   await expect(page.getByText("Paso 2 de 4")).toBeVisible();
   await expect(page.getByLabel("Factura mensual promedio")).toHaveValue("8.000.000");
   await expect(page.getByText("Podrías ahorrar al mes")).toBeVisible();

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
-import { ArrowRight, Building2, Home, Sprout } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FieldError, Label, Select } from "@/components/ui/field";
 import { NumberInput } from "@/components/quote/number-input";
@@ -11,7 +11,6 @@ import { hspByDepartment, type ClientType } from "@/config/quote-config";
 import { pushEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
-const iconFor = { empresa: Building2, agro: Sprout, hogar: Home } as const;
 
 /** Paso 1 del cotizador embebido en el hero del home. Continúa en /cotizador/. */
 export function QuoteStarter() {
@@ -54,15 +53,15 @@ export function QuoteStarter() {
 
         <fieldset className="mt-5">
           <legend className="sr-only">Tipo de cliente</legend>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {clientTypes.map((c) => {
-              const Icon = iconFor[c.value];
+              const Icon = c.icon;
               const checked = clientType === c.value;
               return (
                 <label
                   key={c.value}
                   className={cn(
-                    "flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-sm font-semibold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-copper/50",
+                    "flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-1.5 py-3 text-center text-sm leading-tight font-semibold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-copper/50",
                     checked ? "border-copper bg-copper-soft text-fg" : "border-border-strong bg-surface-2 text-fg-muted hover:text-fg",
                   )}
                 >

@@ -6,12 +6,12 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { ArrowLeft, ArrowRight, Building2, FileUp, Home, Loader2, Lock, Sprout, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, FileUp, Loader2, Lock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChoiceCard, FieldError, Hint, Input, Label, Select } from "@/components/ui/field";
 import { NumberInput } from "@/components/quote/number-input";
 import { LiveEstimate } from "@/components/quote/live-estimate";
-import { clientTypes, modelOptions, roofTypes, stepTitles } from "@/components/quote/options";
+import { clientTypes, isClientType, modelOptions, roofTypes, stepTitles } from "@/components/quote/options";
 import { hspByDepartment, type ClientType } from "@/config/quote-config";
 import { CONTACT_PREFERENCES, contactSchema, INVOICE_MAX_BYTES, INVOICE_TYPES, quoteStepsSchema, type QuoteSteps } from "@/lib/lead-schema";
 import { computeQuote, QuoteError, referenceTariff, type ModelInterest, type QuoteResult, type RoofType } from "@/lib/quote-engine";
@@ -49,7 +49,6 @@ export type FormValues = {
 
 type ContactPreference = (typeof CONTACT_PREFERENCES)[number];
 
-const iconFor = { empresa: Building2, agro: Sprout, hogar: Home } as const;
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 export function toStepsInput(v: FormValues) {
@@ -70,7 +69,8 @@ export function toStepsInput(v: FormValues) {
 export function QuoteWizard() {
   const params = useSearchParams();
   const initialDep = hspByDepartment.some((d) => d.departamento === params.get("dep")) ? params.get("dep")! : "Antioquia";
-  const initialType = (["empresa", "agro", "hogar"] as const).find((t) => t === params.get("tipo")) ?? "";
+  const tipoParam = params.get("tipo");
+  const initialType = isClientType(tipoParam) ? tipoParam : "";
 
   const { register, setValue, getValues, control, setError, clearErrors, formState } = useForm<FormValues>({
     defaultValues: {
@@ -288,9 +288,9 @@ export function QuoteWizard() {
             <>
               <fieldset>
                 <legend className="mb-2 text-sm font-semibold">Tipo de cliente</legend>
-                <div className="grid gap-3 sm:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {clientTypes.map((c) => {
-                    const Icon = iconFor[c.value];
+                    const Icon = c.icon;
                     return (
                       <ChoiceCard
                         key={c.value}

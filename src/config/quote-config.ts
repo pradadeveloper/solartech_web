@@ -10,7 +10,9 @@
 
 import hspTable from "@/content/hsp-colombia.json";
 
-export type ClientType = "empresa" | "agro" | "hogar";
+/** Los mismos tipos de proyecto que usa el CRM (solartech_app: Hogar, Comercial, Empresa, Gran Escala). */
+export const CLIENT_TYPES = ["hogar", "comercial", "empresa", "gran_escala"] as const;
+export type ClientType = (typeof CLIENT_TYPES)[number];
 
 export const quoteConfig = {
   version: "2026-10-20-provisional",
@@ -70,7 +72,7 @@ export const quoteConfig = {
     incomeTaxRate: 0.35, // Art. 240 E.T. (Excel E2)
     specialDeductionShare: 0.5, // Art. 11 Ley 1715 (mod. Ley 2099)
     // Se suma al retorno solo para estos tipos de cliente (declarantes de renta).
-    eligibleClientTypes: ["empresa", "agro"] as ClientType[],
+    eligibleClientTypes: ["comercial", "empresa", "gran_escala"] as ClientType[],
   },
 
   ppa: {

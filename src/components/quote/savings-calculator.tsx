@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
-import { ArrowRight, Building2, Home, Sprout } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Label, Select } from "@/components/ui/field";
 import { NumberInput } from "@/components/quote/number-input";
 import { clientTypes } from "@/components/quote/options";
@@ -12,7 +12,6 @@ import { pushEvent } from "@/lib/analytics";
 import { buttonClass } from "@/components/ui/button";
 import { cn, formatCOP, formatCOPCompact, formatNumber } from "@/lib/utils";
 
-const iconFor = { empresa: Building2, agro: Sprout, hogar: Home } as const;
 const QUICK_BILLS = [1_000_000, 5_000_000, 15_000_000, 40_000_000];
 
 /** Calculadora rápida: factura → ahorro estimado, en vivo. Sin datos de contacto.
@@ -51,9 +50,9 @@ export function SavingsCalculator() {
       <form onChange={start} onSubmit={(e) => e.preventDefault()} className="rounded-3xl border border-border bg-surface p-5 sm:p-8" aria-label="Datos para calcular tu ahorro">
         <fieldset>
           <legend className="mb-2 text-sm font-semibold">¿Para quién es?</legend>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {clientTypes.map((c) => {
-              const Icon = iconFor[c.value];
+              const Icon = c.icon;
               const checked = clientType === c.value;
               return (
                 <label
