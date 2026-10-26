@@ -95,7 +95,7 @@ export function BusinessModelsDeck({ models, headingLevel = "h3" }: { models: De
               </div>
 
               <Heading className={cn("relative mt-6 text-2xl font-extrabold transition-colors", isActive && "lg:text-white")}>{m.shortName}</Heading>
-              <p className={cn("relative mt-1 text-sm font-semibold text-copper-text transition-colors", isActive && "lg:text-[#f3b896]")}>{m.tagline}</p>
+              <p className={cn("relative mt-1 text-sm font-semibold text-copper-text transition-colors", isActive && "lg:text-[#f7b5a3]")}>{m.tagline}</p>
               <p className={cn("relative mt-4 max-w-md text-sm text-fg-muted transition-colors", isActive && "lg:text-white/80")}>{m.summary}</p>
 
               {/* Condiciones del modelo: siempre en móvil; en escritorio solo con todas las tarjetas en reposo. */}

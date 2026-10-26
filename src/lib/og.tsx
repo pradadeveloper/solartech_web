@@ -9,7 +9,7 @@ import { formatCOPCompact, formatNumber } from "@/lib/utils";
 // Se usan rutas con extensión .png para que trailingSlash no las redirija (308).
 export const OG_SIZE = { width: 1200, height: 630 };
 
-const colors = { bg: "#0c0a09", fg: "#f5f1ee", muted: "#a8a09a", copper: "#A6563B", copperText: "#dd8a68", positive: "#82de25", surface: "#151110", border: "#2a2320" };
+const colors = { bg: "#0c0a09", fg: "#f5f1ee", muted: "#d9d2cc", copper: "#B03A22", copperText: "#f28b72", positive: "#82de25", surface: "#151110", border: "#2a2320" };
 
 function Glow() {
   return <div style={{ display: "flex", position: "absolute", top: -220, left: 260, width: 760, height: 520, borderRadius: 9999, background: "rgba(166,86,59,0.35)", filter: "blur(120px)" }} />;

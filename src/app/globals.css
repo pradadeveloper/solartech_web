@@ -11,7 +11,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------- Tokens de marca ----------
-   Cobre Solartech #A6563B (logo), grafito #1D1512 (logo), verde #82DE25 (positivo). */
+   Rojo Solartech #B03A22 (tono del logo, más rojizo), grafito #1D1512 (logo), verde #82DE25 (positivo). */
 :root,
 .light {
   --bg: #fafaf9;
@@ -23,16 +23,16 @@
   --fg: #1d1512;
   --fg-muted: #57504c;
   --fg-subtle: #78706b;
-  --copper: #a6563b;
-  --copper-hover: #8f4a32;
-  --copper-text: #9a4f35;
-  --copper-soft: rgb(166 86 59 / 0.1);
+  --copper: #b03a22;
+  --copper-hover: #952f1a;
+  --copper-text: #a3331c;
+  --copper-soft: rgb(176 58 34 / 0.1);
   --positive: #3d7a0c;
   --positive-soft: rgb(61 122 12 / 0.1);
   /* Barras de datos (validadas con el validador de dataviz contra --surface). */
   --chart-positive: #3d7a0c;
   --grid-line: rgb(29 21 18 / 0.05);
-  --glow: rgb(166 86 59 / 0.18);
+  --glow: rgb(176 58 34 / 0.18);
   --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2357504c' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   color-scheme: light;
 }
@@ -45,19 +45,20 @@
   --border: rgb(255 255 255 / 0.08);
   --border-strong: rgb(255 255 255 / 0.16);
   --fg: #f5f1ee;
-  --fg-muted: #a8a09a;
-  --fg-subtle: #8c837d;
-  --copper: #a6563b;
-  --copper-hover: #b8603f;
-  --copper-text: #dd8a68;
-  --copper-soft: rgb(166 86 59 / 0.16);
+  /* Texto secundario casi blanco: el gris anterior (#a8a09a) se perdía sobre fondo oscuro. */
+  --fg-muted: #d9d2cc;
+  --fg-subtle: #b8b0aa;
+  --copper: #b03a22;
+  --copper-hover: #c2432a;
+  --copper-text: #f28b72;
+  --copper-soft: rgb(176 58 34 / 0.18);
   --positive: #82de25;
   --positive-soft: rgb(130 222 37 / 0.12);
   /* #82de25 es demasiado claro para barras sobre fondo oscuro (L 0,81): se usa un paso más oscuro. */
   --chart-positive: #59a617;
   --grid-line: rgb(255 255 255 / 0.04);
-  --glow: rgb(166 86 59 / 0.35);
-  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8a09a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --glow: rgb(176 58 34 / 0.38);
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d9d2cc' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 
@@ -170,7 +171,7 @@
     background: radial-gradient(60% 60% at 50% 0%, var(--glow), transparent 70%);
   }
   .text-gradient-copper {
-    background: linear-gradient(100deg, var(--copper-text) 0%, #f0b493 50%, var(--copper-text) 100%);
+    background: linear-gradient(100deg, var(--copper-text) 0%, #f7b5a3 50%, var(--copper-text) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

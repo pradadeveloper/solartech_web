@@ -4,7 +4,7 @@ import type { QuoteResult } from "@/lib/quote-engine";
 import { site } from "@/content/site";
 import { formatCOP, formatNumber } from "@/lib/utils";
 
-const copper = "#A6563B";
+const copper = "#B03A22";
 const s = StyleSheet.create({
   page: { padding: 40, fontSize: 10, color: "#1D1512", fontFamily: "Helvetica" },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", borderBottom: `2 solid ${copper}`, paddingBottom: 12 },
