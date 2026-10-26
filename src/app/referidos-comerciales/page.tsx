@@ -47,7 +47,7 @@ export default function ReferidosComercialesPage() {
         aside={
           <div className="relative overflow-hidden rounded-3xl border border-copper/40 bg-surface shadow-2xl shadow-black/10">
             <div className="relative aspect-[16/7]">
-              <Image src="/images/proyectos/proyecto-absorbentes-de-colombia-cartagena.webp" alt="Planta solar de 540 kWp de Absorbentes de Colombia, Cartagena" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
+              <Image src="/images/proyectos/dron-planta-solar-dji-0587.webp" alt="Planta solar sobre la cubierta de un edificio comercial, vista desde dron" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <p className="absolute bottom-3 left-4 text-xs font-semibold text-white">Comisión por proyecto, según su tamaño</p>
             </div>
