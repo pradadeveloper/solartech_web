@@ -1,17 +1,19 @@
-import Image from "next/image";
 import { ArrowDown, CalendarCheck, Handshake, ShieldCheck, TrendingUp, Users } from "lucide-react";
 import { PageHeader } from "@/components/sections/page-header";
 import { Section } from "@/components/sections/section";
 import { FaqList } from "@/components/sections/faq-list";
 import { ReferralEarnings } from "@/components/sections/referral-earnings";
 import { ReferralBooking } from "@/components/sections/referral-booking";
-import { RevealList } from "@/components/ui/reveal-list";
+import { ReferralHeroCard } from "@/components/sections/referral-hero-card";
+import { ReferralProfiles } from "@/components/sections/referral-profiles";
+import { ReferralStickyCta } from "@/components/sections/referral-sticky-cta";
+import { ProcessSteps } from "@/components/sections/process-steps";
 import { ButtonLink } from "@/components/ui/button";
-import { COMMISSION, referralBenefits, referralFaqs, referralProfiles, referralSteps } from "@/content/referrals";
+import { referralBenefits, referralFaqs, referralSteps } from "@/content/referrals";
 import { projectPresets } from "@/content/referral-presets";
 import { portfolioStats } from "@/content/projects";
 import { pageMetadata } from "@/lib/seo";
-import { formatCOPCompact, formatNumber } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
 
 export const metadata = pageMetadata({
   title: "Referidos Comerciales: gana con proyectos solares",
@@ -23,7 +25,6 @@ const benefitIcons = [ShieldCheck, TrendingUp, Users, Handshake];
 
 export default function ReferidosComercialesPage() {
   const stats = portfolioStats();
-  const pct = (r: number) => `${formatNumber(r * 100, 0)} %`;
 
   return (
     <>
@@ -44,57 +45,11 @@ export default function ReferidosComercialesPage() {
             </ButtonLink>
           </>
         }
-        aside={
-          <div className="relative overflow-hidden rounded-3xl border border-copper/40 bg-surface shadow-2xl shadow-black/10">
-            <div className="relative aspect-[16/7]">
-              <Image src="/images/proyectos/dron-planta-solar-dji-0587.webp" alt="Planta solar sobre la cubierta de un edificio comercial, vista desde dron" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
-              <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <p className="absolute bottom-3 left-4 text-xs font-semibold text-white">Comisión por proyecto, según su tamaño</p>
-            </div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-[11px] text-fg-muted">
-                  <th className="px-5 pt-4 pb-2 font-medium">Proyecto típico</th>
-                  <th className="hidden px-5 pt-4 pb-2 text-right font-medium sm:table-cell">Valor</th>
-                  <th className="px-5 pt-4 pb-2 text-right font-medium">
-                    Tu comisión ({pct(COMMISSION.min)}–{pct(COMMISSION.max)})
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {projectPresets.map((p) => (
-                  <tr key={p.key}>
-                    <td className="px-5 py-2.5">
-                      <span className="font-semibold">{p.label}</span>
-                      <span className="ml-1.5 font-mono text-xs text-fg-subtle tabular">~{formatNumber(p.kwp, 0)} kWp</span>
-                    </td>
-                    <td className="hidden px-5 py-2.5 text-right font-mono tabular sm:table-cell">{formatCOPCompact(p.valueCop)}</td>
-                    <td className="px-5 py-2.5 text-right font-mono font-semibold whitespace-nowrap text-positive tabular">
-                      {formatCOPCompact(p.valueCop * COMMISSION.min)} – {formatCOPCompact(p.valueCop * COMMISSION.max)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="px-5 pt-2 pb-4 text-[11px] text-fg-subtle">Valores de referencia con los precios del cotizador de Solartech, IVA incluido.</p>
-          </div>
-        }
+        aside={<ReferralHeroCard presets={projectPresets} />}
       />
 
       <Section id="como-funciona" eyebrow="Cómo funciona" title="Tú refieres, nosotros hacemos el proyecto">
-        <RevealList
-          as="ol"
-          className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4"
-          itemClassName="bg-surface p-6"
-          keys={referralSteps.map((s) => s.title)}
-          items={referralSteps.map((s, i) => (
-            <>
-              <span className="grid size-9 place-items-center rounded-full bg-copper font-mono text-sm font-semibold text-white">{i + 1}</span>
-              <h3 className="mt-4 text-lg font-bold">{s.title}</h3>
-              <p className="mt-2 text-sm text-fg-muted">{s.text}</p>
-            </>
-          ))}
-        />
+        <ProcessSteps steps={referralSteps} />
       </Section>
 
       <Section
@@ -109,17 +64,7 @@ export default function ReferidosComercialesPage() {
 
       <Section id="aliados" eyebrow="Aliados" title="¿Quién puede ser aliado de Solartech?">
         <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <RevealList
-            className="grid gap-3 sm:grid-cols-2"
-            itemClassName="rounded-2xl border border-border bg-surface p-5"
-            keys={referralProfiles.map((p) => p.title)}
-            items={referralProfiles.map((p) => (
-              <>
-                <h3 className="font-bold">{p.title}</h3>
-                <p className="mt-1 text-sm text-fg-muted">{p.text}</p>
-              </>
-            ))}
-          />
+          <ReferralProfiles />
           <div className="rounded-3xl border border-border bg-surface p-6 sm:p-8">
             <h3 className="text-lg font-bold">Por qué vender con Solartech</h3>
             <dl className="mt-5 grid grid-cols-3 gap-3">
@@ -171,6 +116,8 @@ export default function ReferidosComercialesPage() {
       <Section eyebrow="Preguntas" title="Lo que preguntan los aliados">
         <FaqList items={referralFaqs} />
       </Section>
+
+      <ReferralStickyCta />
     </>
   );
 }

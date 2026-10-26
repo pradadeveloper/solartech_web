@@ -15,14 +15,45 @@ export const referralSteps = [
   { title: "Recibes tu comisión", text: "Entre el 1 % y el 5 % del valor del proyecto cuando se hace efectivo." },
 ];
 
+// `profile` es el valor del selector "Tu perfil" del agendamiento (PARTNER_PROFILES).
 export const referralProfiles = [
-  { title: "Brókers y asesores comerciales", text: "Que ya visitan empresas y buscan un producto de alto valor para su portafolio." },
-  { title: "Asesores financieros y de seguros", text: "Que conocen las finanzas de sus clientes y pueden mostrarles un ahorro real." },
-  { title: "Arquitectos, constructores e ingenieros", text: "Que diseñan o remodelan edificios, bodegas y viviendas." },
-  { title: "Electricistas y contratistas", text: "Que entran a las instalaciones y ven el consumo de primera mano." },
-  { title: "Administradores de propiedad horizontal", text: "Que buscan bajar el costo de las zonas comunes de su copropiedad." },
-  { title: "Gremios, cámaras y asociaciones", text: "Que pueden acercar la energía solar a sus afiliados." },
-];
+  {
+    title: "Brókers y asesores comerciales",
+    text: "Que ya visitan empresas y buscan un producto de alto valor para su portafolio.",
+    tip: "Busca empresas que paguen más de $5 millones al mes de energía: son las que más rápido recuperan la inversión.",
+    profile: "Bróker o asesor comercial",
+  },
+  {
+    title: "Asesores financieros y de seguros",
+    text: "Que conocen las finanzas de sus clientes y pueden mostrarles un ahorro real.",
+    tip: "Las empresas que declaran renta pueden deducir el 50 % de la inversión (Ley 1715): es tu mejor argumento.",
+    profile: "Asesor financiero o de seguros",
+  },
+  {
+    title: "Arquitectos, constructores e ingenieros",
+    text: "Que diseñan o remodelan edificios, bodegas y viviendas.",
+    tip: "Proponer la planta solar desde el diseño evita refuerzos y reprocesos: llévala a tus obras nuevas y remodelaciones.",
+    profile: "Arquitecto, constructor o ingeniero",
+  },
+  {
+    title: "Electricistas y contratistas",
+    text: "Que entran a las instalaciones y ven el consumo de primera mano.",
+    tip: "Cubiertas amplias, sin sombra y con consumo alto de día: ese es el prospecto ideal.",
+    profile: "Electricista o contratista",
+  },
+  {
+    title: "Administradores de propiedad horizontal",
+    text: "Que buscan bajar el costo de las zonas comunes de su copropiedad.",
+    tip: "Con PPA la copropiedad no invierte: paga la energía de las zonas comunes más barata que la de la red.",
+    profile: "Administrador de propiedad horizontal",
+  },
+  {
+    title: "Gremios, cámaras y asociaciones",
+    text: "Que pueden acercar la energía solar a sus afiliados.",
+    tip: "Una charla con casos reales para tus afiliados puede abrir varios proyectos a la vez.",
+    profile: "Gremio o asociación",
+  },
+] as const;
 
 export const referralBenefits = [
   { title: "Sin inversión ni riesgo", text: "No compras equipos ni asumes la obra: refieres y Solartech ejecuta." },

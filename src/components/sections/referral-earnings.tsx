@@ -4,10 +4,13 @@ import { useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { COMMISSION, type ProjectPreset } from "@/content/referrals";
 import { pushEvent } from "@/lib/analytics";
+import { useReferralEvent } from "@/lib/referral-events";
 import { cn, formatCOP, formatCOPCompact, formatNumber } from "@/lib/utils";
 
 const MONTHS = 12;
 const RATES = [0.01, 0.02, 0.03, 0.04, 0.05];
+// Metas de ganancia anual del modo "Mi meta" (COP).
+const GOALS = [10, 20, 30, 50, 80, 120, 200, 300, 500].map((m) => m * 1_000_000);
 
 /** Proyectos que se hacen efectivos hasta el mes `m`, repartiendo `n` al año de forma pareja. */
 function closedBy(m: number, n: number) {
@@ -21,16 +24,27 @@ export function ReferralEarnings({ presets }: { presets: ProjectPreset[] }) {
   const [perYear, setPerYear] = useState(4);
   const [rate, setRate] = useState(0.03);
   const [touched, setTouched] = useState(false);
+  const [mode, setMode] = useState<"ganancia" | "meta">("ganancia");
+  const [goalIndex, setGoalIndex] = useState(3);
 
   const preset = presets.find((p) => p.key === presetKey) ?? presets[0];
   const perProject = preset.valueCop * rate;
   const yearly = perProject * perYear;
+  const goal = GOALS[goalIndex];
 
   const touch = () => {
     if (touched) return;
     setTouched(true);
     pushEvent("referral_simulator_used", {});
   };
+
+  // La tabla del encabezado elige el tipo de proyecto y trae al visitante aquí.
+  useReferralEvent("referral:preset", (key) => {
+    if (!presets.some((p) => p.key === key)) return;
+    setPresetKey(key);
+    setMode("ganancia");
+    touch();
+  });
 
   const series = useMemo(
     () => Array.from({ length: MONTHS }, (_, i) => ({ month: i + 1, projects: closedBy(i + 1, perYear), total: closedBy(i + 1, perYear) * perProject })),
@@ -76,21 +90,39 @@ export function ReferralEarnings({ presets }: { presets: ProjectPreset[] }) {
           </div>
         </fieldset>
 
-        <Slider
-          id="ref-per-year"
-          label="Proyectos efectivos al año"
-          value={perYear}
-          display={`${perYear} ${perYear === 1 ? "proyecto" : "proyectos"}`}
-          min={1}
-          max={24}
-          step={1}
-          onChange={(v) => {
-            setPerYear(v);
-            touch();
-          }}
-          minLabel="1"
-          maxLabel="24"
-        />
+        {mode === "ganancia" ? (
+          <Slider
+            id="ref-per-year"
+            label="Proyectos efectivos al año"
+            value={perYear}
+            display={`${perYear} ${perYear === 1 ? "proyecto" : "proyectos"}`}
+            min={1}
+            max={24}
+            step={1}
+            onChange={(v) => {
+              setPerYear(v);
+              touch();
+            }}
+            minLabel="1"
+            maxLabel="24"
+          />
+        ) : (
+          <Slider
+            id="ref-goal"
+            label="¿Cuánto quieres ganar al año?"
+            value={goalIndex}
+            display={formatCOPCompact(goal)}
+            min={0}
+            max={GOALS.length - 1}
+            step={1}
+            onChange={(v) => {
+              setGoalIndex(v);
+              touch();
+            }}
+            minLabel={formatCOPCompact(GOALS[0])}
+            maxLabel={formatCOPCompact(GOALS[GOALS.length - 1])}
+          />
+        )}
         <Slider
           id="ref-rate"
           label="Tu comisión"
@@ -113,6 +145,33 @@ export function ReferralEarnings({ presets }: { presets: ProjectPreset[] }) {
 
       {/* Resultado */}
       <div className="flex flex-col rounded-3xl border border-copper/40 bg-surface p-6 sm:p-8">
+        <div role="tablist" aria-label="Tipo de cálculo" className="mb-6 inline-flex self-start rounded-full border border-border-strong bg-surface-2 p-1 text-sm">
+          {(
+            [
+              ["ganancia", "Mis ganancias"],
+              ["meta", "Mi meta"],
+            ] as const
+          ).map(([m, label]) => (
+            <button
+              key={m}
+              type="button"
+              role="tab"
+              aria-selected={mode === m}
+              onClick={() => {
+                setMode(m);
+                touch();
+              }}
+              className={cn("rounded-full px-4 py-1.5 font-semibold transition-colors", mode === m ? "bg-copper text-white" : "text-fg-muted hover:text-fg")}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {mode === "meta" ? (
+          <GoalView goal={goal} rate={rate} presets={presets} selected={preset.key} onSelect={setPresetKey} />
+        ) : (
+        <>
         <div className="grid gap-4 sm:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <p className="text-xs text-fg-muted">Podrías ganar al año</p>
@@ -157,6 +216,8 @@ export function ReferralEarnings({ presets }: { presets: ProjectPreset[] }) {
             })}
           </ul>
         </div>
+        </>
+        )}
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-6">
           <p className="max-w-sm text-xs text-fg-subtle">Valores de referencia con los precios del cotizador de Solartech, IVA incluido. No constituyen una oferta.</p>
@@ -166,6 +227,78 @@ export function ReferralEarnings({ presets }: { presets: ProjectPreset[] }) {
           </a>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Ritmo en palabras: "1 cada 3 meses" o "2 al mes". */
+function pace(perYear: number) {
+  if (perYear <= 12) {
+    const months = Math.round(MONTHS / perYear);
+    return months <= 1 ? "1 al mes" : `1 cada ${months} meses`;
+  }
+  return `${formatNumber(perYear / MONTHS)} al mes`;
+}
+
+/** Modo "Mi meta": cuántos proyectos de cada tipo hacen falta para la ganancia elegida. */
+function GoalView({
+  goal,
+  rate,
+  presets,
+  selected,
+  onSelect,
+}: {
+  goal: number;
+  rate: number;
+  presets: ProjectPreset[];
+  selected: string;
+  onSelect: (key: string) => void;
+}) {
+  const needed = (p: ProjectPreset) => Math.max(1, Math.ceil(goal / (p.valueCop * rate)));
+  const current = presets.find((p) => p.key === selected) ?? presets[0];
+  const n = needed(current);
+  const most = Math.max(...presets.map(needed));
+
+  return (
+    <div>
+      <p className="text-xs text-fg-muted">
+        Para ganar {formatCOPCompact(goal)} al año con una comisión del {formatNumber(rate * 100)} %
+      </p>
+      <p className="mt-1 text-2xl font-extrabold">
+        necesitas{" "}
+        <span key={`${n}-${current.key}`} className="font-mono text-5xl text-positive tabular motion-safe:inline-block motion-safe:animate-[value-pop_400ms_ease-out]">
+          {n}
+        </span>{" "}
+        {n === 1 ? "proyecto" : "proyectos"} de {current.label.toLowerCase()}
+      </p>
+      <p className="mt-1 text-sm text-fg-muted">Eso es {pace(n)}. Ganarías {formatCOPCompact(n * current.valueCop * rate)} al año.</p>
+
+      <p className="mt-6 text-sm font-semibold">Compara por tipo de proyecto</p>
+      <ul className="mt-3 space-y-2">
+        {presets.map((p) => {
+          const count = needed(p);
+          const on = p.key === current.key;
+          return (
+            <li key={p.key}>
+              <button
+                type="button"
+                onClick={() => onSelect(p.key)}
+                aria-pressed={on}
+                className={cn("grid w-full grid-cols-[7rem_1fr_auto] items-center gap-3 rounded-xl border px-3 py-2.5 text-left text-sm transition-colors", on ? "border-copper bg-copper-soft" : "border-border bg-surface-2 hover:border-fg-subtle")}
+              >
+                <span className="truncate font-semibold">{p.label}</span>
+                <span className="h-2 overflow-hidden rounded-full bg-surface-3">
+                  <span className="block h-full origin-left rounded-full bg-[var(--chart-positive)] transition-transform duration-500" style={{ transform: `scaleX(${count / most})` }} />
+                </span>
+                <span className="w-28 text-right font-mono text-xs tabular">
+                  {count} {count === 1 ? "proyecto" : "proyectos"}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-3 text-xs text-fg-subtle">Menos proyectos grandes rinden lo mismo que muchos pequeños: una industria equivale a varios hogares.</p>
     </div>
   );
 }

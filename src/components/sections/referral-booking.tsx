@@ -11,6 +11,7 @@ import { site, whatsappUrl } from "@/content/site";
 import { referralMeetingSchema } from "@/lib/referral-schema";
 import { bogotaToDate, formatMeetingDay, formatMeetingTime, googleCalendarUrl, icsFile, type CalendarEvent } from "@/lib/calendar";
 import { pushEvent } from "@/lib/analytics";
+import { useReferralEvent } from "@/lib/referral-events";
 import { cn } from "@/lib/utils";
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -51,6 +52,14 @@ export function ReferralBooking() {
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [done, setDone] = useState<{ id: string; event: CalendarEvent } | null>(null);
+  const [profileFlash, setProfileFlash] = useState(false);
+
+  // "Agendar como…" desde la sección de perfiles llena el perfil y lo resalta un momento.
+  useReferralEvent("referral:profile", (perfil) => {
+    setValues((v) => ({ ...v, perfil }));
+    setProfileFlash(true);
+    setTimeout(() => setProfileFlash(false), 1600);
+  });
 
   // Días y franjas ocupadas se calculan al cargar: la página es estática.
   useEffect(() => {
@@ -242,7 +251,13 @@ export function ReferralBooking() {
             <Input id="r-ciudad" autoComplete="address-level2" value={values.ciudad} onChange={set("ciudad")} aria-invalid={Boolean(errors.ciudad)} />
           </Field>
           <Field id="r-perfil" label="Tu perfil" error={errors.perfil}>
-            <Select id="r-perfil" value={values.perfil} onChange={set("perfil")} aria-invalid={Boolean(errors.perfil)}>
+            <Select
+              id="r-perfil"
+              value={values.perfil}
+              onChange={set("perfil")}
+              aria-invalid={Boolean(errors.perfil)}
+              className={cn("transition-shadow duration-500", profileFlash && "border-copper ring-4 ring-copper/30")}
+            >
               <option value="">Selecciona…</option>
               {PARTNER_PROFILES.map((p) => (
                 <option key={p}>{p}</option>
