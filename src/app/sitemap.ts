@@ -23,6 +23,7 @@ const staticRoutes: { path: string; priority: number }[] = [
   { path: "/blog/", priority: 0.7 },
   { path: "/energia-solar-en/", priority: 0.6 },
   { path: "/quienes-somos/", priority: 0.6 },
+  { path: "/referidos-comerciales/", priority: 0.6 },
   { path: "/preguntas-frecuentes/", priority: 0.6 },
   { path: "/contacto/", priority: 0.6 },
   // /politica-de-privacidad/ y /terminos/ quedan fuera mientras sean borrador (noindex).

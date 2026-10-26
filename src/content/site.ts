@@ -103,6 +103,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     title: "Compañía",
     items: [
       { label: "Quiénes somos", href: "/quienes-somos/" },
+      { label: "Referidos Comerciales", href: "/referidos-comerciales/" },
       { label: "Contacto", href: "/contacto/" },
       { label: "Política de privacidad", href: "/politica-de-privacidad/" },
       { label: "Términos y condiciones", href: "/terminos/" },

@@ -29,6 +29,8 @@
   --copper-soft: rgb(166 86 59 / 0.1);
   --positive: #3d7a0c;
   --positive-soft: rgb(61 122 12 / 0.1);
+  /* Barras de datos (validadas con el validador de dataviz contra --surface). */
+  --chart-positive: #3d7a0c;
   --grid-line: rgb(29 21 18 / 0.05);
   --glow: rgb(166 86 59 / 0.18);
   --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2357504c' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -51,6 +53,8 @@
   --copper-soft: rgb(166 86 59 / 0.16);
   --positive: #82de25;
   --positive-soft: rgb(130 222 37 / 0.12);
+  /* #82de25 es demasiado claro para barras sobre fondo oscuro (L 0,81): se usa un paso más oscuro. */
+  --chart-positive: #59a617;
   --grid-line: rgb(255 255 255 / 0.04);
   --glow: rgb(166 86 59 / 0.35);
   --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8a09a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");

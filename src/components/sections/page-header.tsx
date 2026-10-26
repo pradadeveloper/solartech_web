@@ -23,7 +23,8 @@ export function PageHeader({ eyebrow, title, description, crumbs, actions, aside
     <section className={cn("relative isolate overflow-hidden border-b border-border", className)}>
       <div aria-hidden className="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(80%_80%_at_30%_0%,#000_30%,transparent)]" />
       <div aria-hidden className="glow-copper absolute inset-x-0 -top-32 -z-10 h-96 opacity-80" />
-      <Container className={cn("pt-8 pb-14 lg:pb-20", aside && "grid items-center gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16")}>
+      {/* minmax(0,…): en móvil la columna se encoge al ancho de la pantalla aunque el aside traiga tablas anchas. */}
+      <Container className={cn("pt-8 pb-14 lg:pb-20", aside && "grid grid-cols-[minmax(0,1fr)] items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16")}>
         <div>
           <Breadcrumbs items={crumbs} />
           {eyebrow && <Eyebrow className="mt-8">{eyebrow}</Eyebrow>}
